@@ -114,51 +114,47 @@ td.fast { color: var(--accent); font-weight: 500; }
 .rules li b { font-family: var(--display); font-size: 20px; font-weight: 400; font-style: italic; }
 
 /* Honeymoon */
-.tier { display: flex; flex-wrap: wrap; gap: 8px; }
-.tier button {
-  font: inherit; font-size: 15px; background: transparent; color: var(--fg); cursor: pointer;
-  border: 1px solid var(--line); padding: 8px 16px; display: grid; text-align: left; gap: 0;
-}
-.tier button small { font-size: 12px; color: var(--muted); }
-.tier button:hover { border-color: var(--accent); }
-.tier button[aria-pressed="true"] { border-color: var(--accent); background: var(--surface); box-shadow: inset 0 -2px 0 var(--accent); }
-.tier button:focus-visible, .rate input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .summary { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 32px; background: var(--surface); border: 1px solid var(--line); padding: 24px; }
 .grand { display: grid; gap: 4px; align-content: start; }
 .grand b { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 7vw, 52px); line-height: 1.05; font-variant-numeric: tabular-nums; }
 .grand span { font-size: 14px; color: var(--muted); }
 .rate { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-top: 12px; flex-wrap: wrap; }
 .rate input { width: 90px; font: inherit; font-family: var(--mono); padding: 4px 8px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+.rate input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .breakdown { width: 100%; min-width: 0; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .breakdown th, .breakdown td { padding: 8px 0; border-bottom: 1px solid var(--line); text-align: right; font-family: var(--mono); font-size: 14px; }
 .breakdown th { text-align: left; font-family: var(--body); font-weight: 400; }
-.breakdown tr:last-child th, .breakdown tr:last-child td { border-bottom: 0; font-weight: 500; }
+.breakdown tr.sum th, .breakdown tr.sum td { font-weight: 500; }
+.breakdown tr.paid th, .breakdown tr.paid td { color: var(--muted); border-bottom: 0; }
 .breakdown td.krw { color: var(--muted); padding-left: 12px; }
+.warn { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.warn li { border: 1px solid var(--line); border-top: 3px solid var(--rosso); padding: 14px 16px; display: grid; gap: 4px; font-size: 14px; align-content: start; }
+.warn b { font-weight: 500; font-size: 15px; }
+.warn span { color: var(--muted); }
 .days { display: grid; border-top: 1px solid var(--line); }
 .day { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 24px; padding-block: 28px; border-bottom: 1px solid var(--line); }
 .day-num { font-family: var(--display); font-size: 52px; line-height: .9; color: var(--accent); font-variant-numeric: tabular-nums; }
 .day-num small { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--muted); margin-bottom: 6px; }
-.day-body { display: grid; gap: 14px; min-width: 0; }
-.day-body h3 { font-size: 28px; }
-.day-body .where { font-family: var(--mono); font-size: 13px; color: var(--muted); }
-.moves { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.move { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 12px; }
-.mode { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; border: 1px solid var(--line); padding: 2px 6px; align-self: start; text-align: center; color: var(--muted); }
-.mode.t-budget { color: var(--verde); border-color: var(--verde); }
-.mode.t-plus { color: var(--accent); border-color: var(--accent); }
-.move b { font-weight: 500; }
-.move .meta { font-family: var(--mono); font-size: 13px; color: var(--accent); }
-.move .why { font-size: 14px; color: var(--muted); }
-.plan { font-size: 15px; }
-.plan strong { font-weight: 500; }
-.tip { font-size: 14px; color: var(--muted); border-left: 2px solid var(--verde); padding-left: 12px; }
+.day-body { display: grid; gap: 16px; min-width: 0; }
+.day-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+.day-head h3 { font-size: 28px; }
+.dow { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.stay { font-size: 12px; padding: 2px 8px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.stay.paid { color: var(--verde); border-color: var(--verde); }
+.stay.todo { color: var(--rosso); border-color: var(--rosso); }
+.tl { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.tl > li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; }
+.tl time { font-family: var(--mono); font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 1px; }
+.go { margin-top: 6px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); display: grid; gap: 2px; font-size: 14px; }
+.go .mode { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--accent); }
+.go .meta { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+.go .why { color: var(--muted); }
+.tip { font-size: 14px; color: var(--muted); border-left: 2px solid var(--rosso); padding-left: 12px; }
 .cost { list-style: none; margin: 0; padding: 12px 16px; display: grid; gap: 4px; background: var(--surface); border: 1px solid var(--line); font-size: 14px; }
 .cost li { display: flex; justify-content: space-between; gap: 16px; }
 .cost li span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cost li.is-paid { color: var(--muted); }
 .cost li.total { border-top: 1px solid var(--line); padding-top: 6px; margin-top: 4px; font-weight: 500; }
-.checklist { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
-.checklist li { border: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 2px; font-size: 14px; }
-.checklist b { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; color: var(--rosso); font-weight: 500; }
 
 footer { border-top: 1px solid var(--line); padding-top: 16px; font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 
@@ -170,8 +166,8 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; font-size: 13px; 
   .day { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .day-num { font-size: 40px; }
   .day-num small { display: inline; margin-right: 8px; }
-  .move { grid-template-columns: minmax(0, 1fr); gap: 4px; }
-  .mode { justify-self: start; }
+  .tl > li { grid-template-columns: 44px minmax(0, 1fr); gap: 8px; }
+  .tl time { font-size: 13px; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .city { animation: fade .35s ease; }
@@ -184,7 +180,7 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; font-size: 13px; 
     <div class="tricolore" aria-hidden="true"><span></span><span></span><span></span></div>
     <span class="eyebrow">Repubblica Italiana · 이탈리아 공화국</span>
     <h1>Viaggio in <em>Italia</em></h1>
-    <p class="lead">알프스에서 시칠리아까지 장화 모양으로 뻗은 나라. 도시마다 말투도, 파스타 모양도, 커피 마시는 법도 다릅니다. 8박 10일 신혼여행 일정과 날짜별 이동 방법·비용, 도시 안내, 기차 시간표, 지역 음식, 꼭 필요한 이탈리아어를 한 장에 모았습니다.</p>
+    <p class="lead">알프스에서 시칠리아까지 장화 모양으로 뻗은 나라. 도시마다 말투도, 파스타 모양도, 커피 마시는 법도 다릅니다. 밀라노에서 로마까지 8박 10일 신혼여행의 시간대별 이동 방법과 비용, 도시 안내, 기차 시간표, 지역 음식, 꼭 필요한 이탈리아어를 한 장에 모았습니다.</p>
     <div class="facts">
       <div><b>Roma</b><span>수도</span></div>
       <div><b>20</b><span>주(Regioni)</span></div>
@@ -197,37 +193,36 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; font-size: 13px; 
   <section aria-labelledby="moon-h" id="luna-di-miele">
     <div class="sec-head">
       <span class="eyebrow">Luna di miele · 8박 10일</span>
-      <h2 id="moon-h">신혼여행 일정과 비용</h2>
-      <p>로마 3박, 아말피 해안(포지타노) 2박, 피렌체 3박으로 도는 가장 많이 가는 동선입니다. 여행 스타일을 고르면 날짜별 비용과 총액이 2인 기준으로 바뀝니다.</p>
-    </div>
-    <div class="tier" id="tier" role="group" aria-label="여행 스타일">
-      <button type="button" id="tier-0" data-t="0">알뜰<small>경유 이코노미 · 3성 · 대중교통</small></button>
-      <button type="button" id="tier-1" data-t="1">표준<small>직항 이코노미 · 4성 · 기차+전용차</small></button>
-      <button type="button" id="tier-2" data-t="2">럭셔리<small>직항 비즈니스 · 5성 · 프라이빗</small></button>
+      <h2 id="moon-h">우리 신혼여행 일정</h2>
+      <p>밀라노 도착, 피렌체, 토스카나 렌터카 여행, 소렌토와 아말피 해안, 로마 출국 순서입니다. 시간대별로 어떻게 이동하는지와 얼마가 드는지를 2인 기준으로 정리했습니다. 결제 완료한 숙소와 항공권은 총액에서 뺐습니다.</p>
     </div>
     <div class="summary">
       <div class="grand">
-        <span>2인 총 예상 비용</span>
+        <span>앞으로 쓸 돈 (2인, 예상)</span>
         <b id="grand-krw">—</b>
         <span id="grand-sub">—</span>
         <label class="rate" for="rate">환율 1유로 = <input id="rate" type="number" inputmode="numeric" min="500" max="5000" step="10" value="1600"> 원</label>
       </div>
       <table class="breakdown" id="breakdown" aria-label="항목별 비용"></table>
     </div>
-    <div class="days" id="days"></div>
+
     <div class="sec-head">
-      <span class="eyebrow">Prenotazioni</span>
-      <h3 style="font-size:28px">언제 예약할까</h3>
+      <span class="eyebrow">Attenzione</span>
+      <h3 style="font-size:28px">출발 전에 꼭 확인할 것</h3>
     </div>
-    <ul class="checklist">
-      <li><b>6개월 전</b>항공권, 포지타노 숙소. 포지타노는 방이 적어 성수기(6~9월)엔 가장 먼저 찹니다.</li>
-      <li><b>4개월~2개월 전</b>고속열차(Frecciarossa·Italo). 판매 시작 직후가 가장 싸고, 출발이 가까울수록 두세 배 오릅니다.</li>
-      <li><b>약 60일 전</b>바티칸 박물관. 공식 사이트에서 시간 지정 예약. 오전 첫 타임이 덜 붐빕니다.</li>
-      <li><b>약 30일 전</b>콜로세움, 우피치, 아카데미아, 두오모 쿠폴라. 콜로세움은 판매 오픈 당일 매진되는 시간대가 많습니다.</li>
-      <li><b>2~4주 전</b>나폴리→포지타노 전용차, 카프리 보트 투어, 토스카나 와이너리 투어.</li>
-      <li><b>출발 전</b>eSIM, 여행자 보험. 호텔에 신혼여행이라고 미리 알리면 업그레이드나 와인을 주는 곳이 많습니다.</li>
+    <ul class="warn">
+      <li><b>렌터카 편도 반납 수수료</b><span>피렌체에서 빌려 나폴리 공항에 반납하면 편도 수수료가 €80~250 붙습니다. 예약 화면의 최종 금액에 포함됐는지 확인하세요. 아래 계산에는 €150으로 넣었습니다.</span></li>
+      <li><b>운전 서류</b><span>국제운전면허증, 한국 운전면허증, 여권, 운전자 본인 명의 신용카드(체크카드 불가인 곳이 많음)가 모두 필요합니다.</span></li>
+      <li><b>ZTL 벌금</b><span>피렌체·시에나·몬탈치노·피엔자 구시가는 차량 진입 금지 구역입니다. 카메라에 찍히면 몇 달 뒤 건당 €80~300 고지서가 옵니다. 성벽 밖 주차장에 세우세요.</span></li>
+      <li><b>5일차 일정이 빠듯함</b><span>치비타에서 나폴리 공항까지 쉬지 않고 3시간이고 나폴리 근처는 자주 막힙니다. 반납 예약을 18:00으로 잡고 영업시간을 확인해 두세요.</span></li>
+      <li><b>도시세는 현장 결제</b><span>결제 완료한 호텔도 도시세는 체크인·체크아웃 때 따로 냅니다. 1인 1박 €2~8.</span></li>
+      <li><b>8일차는 일요일</b><span>바티칸 박물관은 일요일 휴관이고 그 달 마지막 일요일만 무료 개방합니다(9:00~14:00, 입장 12:30까지, 매우 붐빔). 교황이 로마에 있으면 정오에 광장에서 삼종기도가 있습니다.</span></li>
+      <li><b>6일차 페리</b><span>아말피 해안 페리는 대략 4~10월에만 다니고 파도가 높으면 결항합니다. 그럴 땐 SITA 버스로 이동합니다. 아말피발 소렌토행 마지막 배는 보통 17:00 전후.</span></li>
+      <li><b>폼페이 짐 보관</b><span>유적 입구 보관소는 큰 캐리어를 받지 않을 수 있습니다. 안 되면 폼페이 스카비역 근처 사설 보관소(가방당 €5 안팎)를 쓰세요.</span></li>
     </ul>
-    <p class="note">비용은 2025~2026년 성수기 직전(5·6·9월) 기준 대략값입니다. 성수기(7~8월)엔 숙소가 20~40% 오르고, 비수기(11~3월)엔 아말피 해안 페리와 상당수 호텔이 쉽니다. 쇼핑과 기념품은 제외했습니다.</p>
+
+    <div class="days" id="days"></div>
+    <p class="note">금액은 2025~2026년 가격을 바탕으로 한 대략값이고 계산에는 범위의 중간값을 넣었습니다. 기차와 렌터카는 일찍 예약할수록 싸고, 예약 전 숙소는 4성 기준으로 잡았습니다. 쇼핑, 기념품, 택스 리펀드는 제외했습니다.</p>
   </section>
 
   <section aria-labelledby="cities-h">
@@ -292,202 +287,228 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; font-size: 13px; 
 </div>
 
 <script>
-// ── 신혼여행 일정: 비용은 모두 2인 기준 유로, [알뜰, 표준, 럭셔리]
-const hotels = {
-  rome:     { name: "로마",     v: [140, 260, 600],  tax: [6, 7.5, 10] },
-  positano: { name: "포지타노", v: [220, 450, 1000], tax: [3, 4, 5] },
-  florence: { name: "피렌체",   v: [140, 250, 550],  tax: [5, 7, 8] }
-};
-const stars = ["3성", "4성", "5성"];
-const mealPerDay = [90, 170, 350];
-const flightsKRW = [2600000, 4400000, 15000000];
-const flightNote = ["경유 이코노미 2인", "직항 이코노미 2인", "직항 비즈니스 2인"];
-const misc = [100, 150, 250];
-const cats = { transport: "현지 교통", ticket: "입장료·투어", hotel: "숙박", tax: "도시세(숙박세)", meal: "식비", misc: "기타 (eSIM·보험·팁)" };
+// ── 신혼여행 일정: 비용은 2인 기준 유로 (범위의 중간값)
+const cats = { transit: "기차·버스·페리·지하철", car: "렌터카 (대여·보험·편도·기름·통행료·주차)", hotel: "숙박 (예약 전 4박)", tax: "도시세 (현장 결제)", ticket: "입장료·체험", meal: "식비" };
 
 const days = [
-  { title: "출국, 로마 도착", where: "인천 → 로마", stay: "rome", meal: .5,
-    moves: [
-      { mode: "항공", what: "인천(ICN) → 로마 피우미치노(FCO)", meta: "직항 약 13시간 30분 · 경유 16~20시간", why: "대한항공·아시아나 직항은 보통 같은 날 오후~저녁 도착. 경유는 이스탄불·두바이·프랑크푸르트 등.", t: [0, 1, 2] },
-      { mode: "기차", what: "피우미치노 공항 → 로마 테르미니", meta: "32분 · 1인 €14", why: "레오나르도 익스프레스. 15~30분 간격, 공항역 자판기나 Trenitalia 앱에서 구매.", t: [0] },
-      { mode: "택시", what: "공항 → 성벽 안 숙소", meta: "40~60분 · 차량당 정액 €55", why: "공항 택시 승강장의 흰색 공식 택시만 이용. 정액 요금이라 미터기 요금을 요구하면 거절해도 됩니다.", t: [1, 2] }
+  { dow: "일", title: "밀라노 도착", stay: ["글램 호텔", "paid"],
+    items: [
+      { t: "19:00", x: "말펜사 공항 1터미널 도착 (대한항공), 입국심사·짐 찾기" },
+      { t: "20:00", x: "공항 → 밀라노 중앙역", go: { m: "기차 · 말펜사 익스프레스", meta: "약 50분 · 1인 €13", why: "도착층에서 'Treni' 표지판을 따라 지하 역으로. 중앙역(Centrale)행을 타세요(카도르나행도 있음). 자판기·Trenitalia 앱 구매, 30분 간격. 대안: 공항버스(Terravision·Autostradale) 약 1시간, 1인 €10." } },
+      { t: "21:00", x: "글램 호텔 체크인 (늦은 도착 미리 알리기)", go: { m: "도보", meta: "중앙역에서 약 3분", why: "호텔이 중앙역 앞 광장 건너편이라 짐 끌고 걸어갈 수 있습니다." } },
+      { t: "21:30", x: "역 근처에서 간단히 저녁, 휴식" }
     ],
-    plan: "체크인 후 숙소 근처에서 가볍게 저녁. 시차 적응을 위해 일찍 쉬세요.",
-    lines: [{ c: "transport", l: ["공항 → 테르미니 기차", "공항 → 숙소 택시", "공항 → 숙소 택시"], v: [28, 55, 55] }] },
-
-  { title: "고대 로마", where: "로마", stay: "rome", meal: 1,
-    moves: [
-      { mode: "지하철", what: "테르미니 → 콜로세오 (B선)", meta: "2정거장 5분 · 1회 €1.50", why: "티켓은 100분 유효. 개찰구에서 비접촉 신용카드로 바로 찍어도 됩니다." },
-      { mode: "도보", what: "콜로세움 → 포로 로마노 → 판테온 → 트레비 분수 → 스페인 계단", meta: "총 약 4km", why: "로마 중심가는 걸어서 이어집니다. 편한 신발 필수." }
-    ],
-    plan: "<strong>오전</strong> 콜로세움과 포로 로마노·팔라티노 언덕 (시간 지정 예약). <strong>점심</strong> 몬티 지구. <strong>오후</strong> 판테온, 트레비 분수에 동전 던지기. <strong>저녁</strong> 스페인 계단 위에서 노을.",
-    lines: [
-      { c: "transport", l: ["지하철·버스", "지하철 + 택시 몇 번", "택시·전용차"], v: [6, 30, 80] },
-      { c: "ticket", l: ["콜로세움 일반권 1인 €18", "콜로세움 풀 익스피리언스(지하·아레나) 1인 €24", "콜로세움 프라이빗 가이드 3시간 + 입장권"], v: [36, 48, 400] },
-      { c: "ticket", l: "판테온 1인 €5", v: [10, 10, 10] }
+    costs: [
+      { c: "transit", l: "말펜사 익스프레스 1인 €13 × 2", v: 26 },
+      { c: "hotel", l: "글램 호텔 1박", paid: true },
+      { c: "tax", l: "밀라노 도시세 1인 약 €6 × 2", v: 12 },
+      { c: "meal", l: "간단한 저녁", v: 40 }
     ] },
 
-  { title: "바티칸과 트라스테베레", where: "로마", stay: "rome", meal: 1,
-    moves: [
-      { mode: "지하철", what: "테르미니 → 오타비아노 (A선)", meta: "약 15분 · 1회 €1.50", why: "역에서 바티칸 박물관 입구까지 도보 10분." },
-      { mode: "도보", what: "성 베드로 광장 → 트라스테베레", meta: "도보 30분 · 택시 €12~15", why: "테베레 강변을 따라 걸으면 산탄젤로 성을 지나갑니다." }
+  { dow: "월", title: "밀라노 → 피렌체", stay: ["피렌체 숙소", "todo"],
+    items: [
+      { t: "08:00", x: "조식, 체크아웃하고 호텔에 짐 맡기기" },
+      { t: "09:00", x: "중앙역 → 두오모", go: { m: "지하철 · M3 노란선", meta: "4정거장 약 10분 · 1회 €2.20", why: "'Centrale FS'역에서 San Donato 방면. 개찰구에서 비접촉 신용카드를 바로 찍으면 됩니다(카드 1장당 1명)." } },
+      { t: "09:30", x: "두오모 성당·테라스 (시간 지정 예약)", go: { m: "입장권", meta: "두오모 패스 엘리베이터 1인 약 €26 · 계단 약 €20", why: "공식 사이트 duomomilano.it에서 예약. 어깨·무릎 가리는 옷." } },
+      { t: "11:00", x: "갈레리아 비토리오 에마누엘레 2세 산책", go: { m: "도보", meta: "두오모 바로 옆 · 무료", why: "바닥의 황소 모자이크에서 뒤꿈치로 한 바퀴 돌면 다시 온다는 이야기가 있습니다." } },
+      { t: "12:30", x: "점심" },
+      { t: "14:00", x: "호텔에서 짐 찾아 중앙역", go: { m: "지하철 · M3", meta: "약 10분 · 1회 €2.20", why: "두오모 → Centrale FS, 역에서 호텔까지 도보 3분." } },
+      { t: "14:30", x: "밀라노 중앙역 → 피렌체 S.M.N.", go: { m: "고속열차 · Frecciarossa 또는 Italo", meta: "약 1시간 55분 · 1인 €30~60", why: "출발 2~3개월 전에 사면 €30대. 14:30 전후로 30분 간격 직행이 있습니다. 2등석(Standard)으로 충분." } },
+      { t: "16:30", x: "피렌체 도착, 호텔 체크인", go: { m: "도보 또는 택시", meta: "도보 5~15분 · 택시 €10~15", why: "다음 날 아침 보르고 오니산티에서 렌터카를 받으니 S.M.N.역과 오니산티 사이에 숙소를 잡으면 편합니다." } },
+      { t: "17:30", x: "두오모 외관 · 시뇨리아 광장 · 베키오 다리 (우피치·아카데미아는 월요일 휴관)", go: { m: "도보", meta: "무료", why: "역에서 두오모 10분, 두오모에서 베키오 다리 10분." } },
+      { t: "19:00", x: "미켈란젤로 광장 일몰", go: { m: "도보 또는 버스 12·13번", meta: "도보 25분 · 버스 1회 €1.70", why: "베키오 다리에서 강을 건너 산 니콜로 문 계단으로 올라가면 25분. 돌아올 땐 택시 €15 안팎." } },
+      { t: "20:30", x: "저녁 (비스테카 알라 피오렌티나: 2인 1kg, kg당 €50~70)" }
     ],
-    plan: "<strong>오전</strong> 바티칸 박물관과 시스티나 성당. <strong>오후</strong> 성 베드로 대성당과 쿠폴라 전망대. <strong>저녁</strong> 트라스테베레 골목 트라토리아에서 카초 에 페페.",
-    tip: "바티칸은 민소매·짧은 반바지 입장 불가. 얇은 숄 하나 챙기세요.",
-    lines: [
-      { c: "transport", l: ["지하철", "지하철 + 택시", "택시"], v: [6, 30, 60] },
-      { c: "ticket", l: ["바티칸 박물관 온라인 예약 1인 €25", "바티칸 가이드 투어(줄 서지 않음) 1인 약 €70", "바티칸 프라이빗 얼리 입장 투어"], v: [50, 140, 500] },
-      { c: "ticket", l: "성 베드로 쿠폴라 (엘리베이터+계단) 1인 약 €10", v: [20, 20, 20] }
+    costs: [
+      { c: "transit", l: "밀라노 지하철 4회 (2인)", v: 18 },
+      { c: "ticket", l: "두오모 패스 엘리베이터 1인 약 €26 × 2", v: 52 },
+      { c: "meal", l: "점심", v: 50 },
+      { c: "transit", l: "밀라노 → 피렌체 고속열차 1인 약 €45 × 2", v: 90 },
+      { c: "transit", l: "피렌체 택시 (미켈란젤로 광장 귀가 등)", v: 15 },
+      { c: "hotel", l: "피렌체 4성 1박 (예약 전)", v: 230 },
+      { c: "tax", l: "피렌체 도시세 1인 약 €7 × 2", v: 14 },
+      { c: "meal", l: "저녁 (비스테카)", v: 100 }
     ] },
 
-  { title: "폼페이 들러 아말피 해안으로", where: "로마 → 나폴리 → 폼페이 → 포지타노", stay: "positano", meal: 1,
-    moves: [
-      { mode: "고속열차", what: "로마 테르미니 → 나폴리 중앙역", meta: "1시간 10분 · 1인 €20~55", why: "Frecciarossa 또는 Italo, 30분 간격. 일찍 살수록 쌉니다." },
-      { mode: "사철", what: "나폴리 가리발디 → 폼페이 스카비 (치르쿰베수비아나)", meta: "35~40분 · 1인 약 €3.60", why: "나폴리 중앙역 지하 가리발디역에서 탑승. 캐리어는 유적 입구 보관소에 맡깁니다(대형 짐 제한 확인).", t: [0] },
-      { mode: "사철+버스", what: "폼페이 → 소렌토 → 포지타노 (SITA 버스)", meta: "30분 + 50분 · 약 €3 + €4", why: "SITA 버스는 붐비고 커브가 심합니다. 큰 캐리어 두 개라면 고생스러운 구간.", t: [0] },
-      { mode: "전용차", what: "나폴리역 → 폼페이(2~3시간 정차) → 포지타노", meta: "이동 약 2시간 · 차량당 €250~350", why: "기사가 짐을 차에 두고 기다려 줍니다. 신혼여행이라면 돈을 쓸 가치가 가장 큰 구간입니다.", t: [1, 2] }
+  { dow: "화", title: "피렌체 → 시에나 → 몬탈치노", stay: ["포데레 브리지오", "paid"],
+    items: [
+      { t: "08:30", x: "조식, 체크아웃" },
+      { t: "09:00", x: "렌터카 픽업 (보르고 오니산티)", go: { m: "렌터카", meta: "목요일 17시까지 3일 · 소형 오토 약 €80/일", why: "직원에게 ZTL을 피하는 출구 경로를 꼭 물어보세요. 업체가 번호판을 신고해 주는 지정 경로로만 나가야 합니다. 완전 자차보험(제로 면책) 권장." } },
+      { t: "09:30", x: "시에나로 출발", go: { m: "자동차 · 라코르도 피렌체-시에나 (무료 도로)", meta: "약 75km · 1시간 10분", why: "통행료 없음. 시에나는 구시가 밖 '산타 카테리나' 또는 '일 캄포' 주차장에 세우고 에스컬레이터로 올라갑니다." } },
+      { t: "11:00", x: "캄포 광장 · 시에나 두오모, 점심", go: { m: "입장권", meta: "두오모 통합권(OPA SI) 1인 약 €16~20", why: "바닥 대리석 상감이 전부 공개되는 기간(보통 8월 말~10월)엔 가격이 오릅니다. 주차 시간당 약 €2." } },
+      { t: "14:30", x: "몬탈치노로 출발", go: { m: "자동차 · SR2 카시아 가도", meta: "약 45km · 50분", why: "부온콘벤토에서 언덕길로 올라갑니다. 시내 입구 주차장(시간당 약 €1.5~2)에 세우세요." } },
+      { t: "15:30", x: "몬탈치노 시내 산책, 와인 가게", go: { m: "체험", meta: "요새(Fortezza) 에노테카 시음 1인 €15~25", why: "브루넬로 디 몬탈치노 3잔 시음이 기본. 운전자는 맛만 보세요(이탈리아 음주운전 기준 0.05%, 면허 3년 미만은 0)." } },
+      { t: "17:30", x: "포데레 브리지오 체크인 (15~19시만 가능)", go: { m: "자동차", meta: "약 10분", why: "늦어질 것 같으면 전화로 알리세요." } },
+      { t: "19:30", x: "숙소 레스토랑 저녁 · 와인 시음 (예약)" }
     ],
-    plan: "<strong>낮</strong> 폼페이 유적 2~3시간. <strong>늦은 오후</strong> 포지타노 도착. <strong>저녁</strong> 절벽 테라스에서 노을 보며 저녁.",
-    tip: "포지타노는 계단으로 된 마을입니다. 차에서 내린 곳에서 숙소까지 포터 서비스가 가방당 €5~10.",
-    lines: [
-      { c: "transport", l: ["로마 → 나폴리 기차 2등석", "로마 → 나폴리 기차 2등석", "로마 → 나폴리 기차 비즈니스석"], v: [50, 90, 160] },
-      { c: "transport", l: ["나폴리 → 폼페이 → 포지타노 사철·버스", "나폴리 → 포지타노 전용차 (폼페이 정차)", "나폴리 → 포지타노 전용차 (폼페이 정차)"], v: [30, 300, 350] },
-      { c: "transport", l: "포터 서비스", v: [0, 20, 20] },
-      { c: "ticket", l: "폼페이 유적 1인 €18", v: [36, 36, 36] },
-      { c: "ticket", l: "폼페이 공인 가이드 2시간", v: [0, 0, 160] }
+    costs: [
+      { c: "car", l: "렌터카 3일 (소형 오토, 약 €80/일)", v: 240 },
+      { c: "car", l: "완전 자차보험 3일 (약 €30/일)", v: 90 },
+      { c: "car", l: "편도 반납 수수료 (피렌체 → 나폴리 공항)", v: 150 },
+      { c: "car", l: "기름 (약 120km)", v: 15 },
+      { c: "car", l: "주차 (시에나·몬탈치노)", v: 12 },
+      { c: "ticket", l: "시에나 두오모 통합권 1인 약 €18 × 2", v: 36 },
+      { c: "ticket", l: "몬탈치노 와인 시음 (선택)", v: 40 },
+      { c: "meal", l: "점심", v: 40 },
+      { c: "hotel", l: "포데레 브리지오 2박", paid: true },
+      { c: "tax", l: "몬탈치노 도시세 1인 약 €2 × 2명 × 2박", v: 8 },
+      { c: "meal", l: "숙소 레스토랑 저녁 + 시음", v: 140 }
     ] },
 
-  { title: "바다 위의 하루", where: "포지타노 · 아말피 · 카프리", stay: "positano", meal: 1,
-    moves: [
-      { mode: "페리", what: "포지타노 → 아말피", meta: "25분 · 1인 편도 약 €12", why: "4~10월 운항. 아말피에서 라벨로까지 SITA 버스 25분, 약 €2.", t: [0] },
-      { mode: "보트 투어", what: "포지타노 출발 카프리 공유 보트 (8~12명)", meta: "7~8시간 · 1인 약 €110~140", why: "해안 동굴과 파랄리오니 바위를 돌고 카프리 섬에서 자유 시간. 푸른 동굴은 파도에 따라 못 들어갈 수 있고 입장료는 별도(약 €18).", t: [1] },
-      { mode: "프라이빗", what: "선장 포함 프라이빗 보트 하루", meta: "7~8시간 · 보트당 €900~1,400", why: "원하는 해변에 세우고 수영과 스노클링. 프로세코와 간식이 포함된 상품이 많습니다.", t: [2] }
+  { dow: "수", title: "사투르니아 온천과 발도르차", stay: ["포데레 브리지오", "paid"],
+    items: [
+      { t: "08:00", x: "조식" },
+      { t: "09:30", x: "사투르니아로 출발", go: { m: "자동차 · SP64, SS323", meta: "약 85km · 1시간 20분", why: "아미아타 산 옆을 지나는 굽은 시골길입니다." } },
+      { t: "11:00", x: "카스카테 델 물리노 온천", go: { m: "무료 노천온천", meta: "입장 무료 · 근처 주차 약 €5", why: "37도 유황 온천. 수영복, 아쿠아슈즈, 수건 챙기고 은반지·은목걸이는 유황에 변색되니 빼 두세요. 탈의실은 근처 바의 유료 시설뿐." } },
+      { t: "13:00", x: "근처에서 점심" },
+      { t: "14:00", x: "피엔자로 출발", go: { m: "자동차", meta: "약 95km · 1시간 30분", why: "도중 SR2 카시아 가도 구간이 발도르차의 사이프러스 길 풍경입니다. 산 퀴리코 근처 '사이프러스 언덕'에서 잠깐 정차." } },
+      { t: "15:30", x: "피엔자 산책, 페코리노 치즈", go: { m: "주차", meta: "성벽 밖 주차장 시간당 약 €2", why: "치즈 가게에서 숙성 기간별로 맛보고 진공 포장해 달라고 하면 들고 올 수 있습니다." } },
+      { t: "18:00", x: "성벽길(Via dell'Amore 쪽)에서 발도르차 일몰" },
+      { t: "19:00", x: "숙소 복귀, 저녁", go: { m: "자동차", meta: "약 25km · 35~45분", why: "해 진 뒤 시골길은 가로등이 없습니다. 천천히." } }
     ],
-    plan: "바다에서 보는 아말피 해안 절벽이 이 여행의 하이라이트입니다. <strong>저녁</strong>은 포지타노 해변(스피아자 그란데) 레스토랑.",
-    lines: [
-      { c: "ticket", l: ["아말피 왕복 페리 + 라벨로 버스", "카프리 공유 보트 투어 2인", "프라이빗 보트 하루"], v: [56, 250, 1100] }
+    costs: [
+      { c: "car", l: "기름 (약 210km)", v: 30 },
+      { c: "car", l: "주차 (사투르니아·피엔자)", v: 10 },
+      { c: "meal", l: "점심", v: 40 },
+      { c: "ticket", l: "페코리노 치즈", v: 20 },
+      { c: "meal", l: "저녁", v: 90 }
     ] },
 
-  { title: "피렌체로", where: "포지타노 → 피렌체", stay: "florence", meal: 1,
-    moves: [
-      { mode: "페리", what: "포지타노 → 살레르노", meta: "약 1시간 10분 · 1인 약 €20", why: "4~10월 운항. 살레르노 항구에서 기차역까지 도보 10분.", t: [0] },
-      { mode: "고속열차", what: "살레르노 → 피렌체 S.M.N.", meta: "약 3시간 · 1인 €45~90", why: "직행 Frecciarossa가 하루 여러 편 있습니다.", t: [0] },
-      { mode: "전용차", what: "포지타노 → 나폴리 중앙역", meta: "약 1시간 30분 · 차량당 €180~220", why: "짐을 들고 계단과 배를 오르내리지 않아도 됩니다.", t: [1, 2] },
-      { mode: "고속열차", what: "나폴리 → 피렌체 S.M.N.", meta: "약 2시간 55분 · 1인 €50~90 (비즈니스 €90~140)", why: "Frecciarossa 또는 Italo 직행.", t: [1, 2] },
-      { mode: "택시", what: "S.M.N. 역 → 숙소", meta: "5~10분 · €10~15", why: "역사 지구는 차량 제한 구역(ZTL)이라 호텔 바로 앞까지 못 가는 경우도 있습니다.", t: [1, 2] }
+  { dow: "목", title: "치비타 → 나폴리 → 소렌토", stay: ["소렌토 숙소", "todo"],
+    items: [
+      { t: "08:30", x: "조식" },
+      { t: "09:30", x: "체크아웃(10시 전), 치비타로 출발", go: { m: "자동차 · SR2 → 볼세나 호수", meta: "약 110km · 1시간 20분~30분", why: "통행료 없는 국도. 볼세나 호숫가를 지납니다." } },
+      { t: "11:00", x: "반뇨레조 주차, 다리 건너 치비타 관광", go: { m: "입장료 · 도보", meta: "치비타 입장 1인 €5 · 주차 약 €5", why: "주차장에서 다리 입구까지 도보 또는 셔틀, 다리는 걸어서 15분 오르막." } },
+      { t: "12:30", x: "점심" },
+      { t: "13:30", x: "나폴리 공항으로 출발", go: { m: "자동차 · A1 고속도로 (오르비에토 IC → 나폴리)", meta: "약 280km · 3시간 + 정체", why: "톨게이트는 진입 때 표를 뽑고 나갈 때 카드로 결제(노란 'Telepass' 차로 금지, 파란 'Carte' 차로). 반납 전 공항 근처에서 기름 가득." } },
+      { t: "17:00", x: "나폴리 공항 렌트 반납", go: { m: "렌터카 반납", meta: "공항 렌터카 주차장", why: "반납 시 차량 사진·영상을 찍어 두세요. 영업시간과 반납 장소를 미리 확인." } },
+      { t: "17:30", x: "공항 → 소렌토", go: { m: "공항 직행버스 · Curreri", meta: "약 1시간 15분 · 1인 약 €10", why: "도착층 밖 버스 정류장. 기사에게 현금 또는 온라인 구매. 대략 1~2시간 간격이라 시간표 확인 필수. 놓치면 택시 정액 약 €120." } },
+      { t: "19:00", x: "호텔 체크인, 저녁" }
     ],
-    plan: "<strong>오후</strong> 피렌체 도착. <strong>해 질 녘</strong> 아르노 강변을 걸어 베키오 다리로.",
-    lines: [
-      { c: "transport", l: ["포지타노 → 살레르노 페리", "포지타노 → 나폴리 전용차", "포지타노 → 나폴리 전용차"], v: [40, 200, 220] },
-      { c: "transport", l: ["살레르노 → 피렌체 기차 2등석", "나폴리 → 피렌체 기차 2등석", "나폴리 → 피렌체 기차 비즈니스석"], v: [110, 150, 250] },
-      { c: "transport", l: "역 → 숙소 택시", v: [0, 15, 15] }
+    costs: [
+      { c: "car", l: "기름 (약 390km)", v: 55 },
+      { c: "car", l: "고속도로 통행료 (오르비에토 → 나폴리)", v: 22 },
+      { c: "car", l: "반뇨레조 주차", v: 5 },
+      { c: "ticket", l: "치비타 입장 1인 €5 × 2", v: 10 },
+      { c: "meal", l: "점심", v: 40 },
+      { c: "transit", l: "공항 → 소렌토 버스 1인 약 €10 × 2", v: 20 },
+      { c: "hotel", l: "소렌토 4성 2박 (예약 전, 1박 약 €250)", v: 500 },
+      { c: "tax", l: "소렌토 도시세 1인 약 €4 × 2명 × 2박", v: 16 },
+      { c: "meal", l: "저녁", v: 80 }
     ] },
 
-  { title: "르네상스 하루", where: "피렌체", stay: "florence", meal: 1,
-    moves: [
-      { mode: "도보", what: "숙소 → 아카데미아 → 두오모 → 우피치 → 베키오 다리", meta: "서로 10~15분 거리", why: "피렌체 중심은 전부 걸어서 다닙니다." },
-      { mode: "버스", what: "중심가 → 미켈란젤로 광장 (12·13번)", meta: "약 15분 · 1회 €1.70", why: "강 건너 계단길로 걸어 올라가면 20~25분." }
+  { dow: "금", title: "포지타노 · 아말피", stay: ["소렌토 숙소", "todo"],
+    items: [
+      { t: "08:00", x: "조식" },
+      { t: "09:00", x: "마리나 피콜라 → 포지타노", go: { m: "페리", meta: "약 40분 · 1인 약 €22", why: "시내에서 마리나 피콜라까지는 빌라 코무날레 공원 엘리베이터(1회 약 €1.20) 또는 계단. 표는 항구 매표소나 온라인(NLG, Alilauro 등)." } },
+      { t: "10:00", x: "포지타노 골목 · 해변" },
+      { t: "13:00", x: "점심 (해변가는 비싼 편)" },
+      { t: "14:00", x: "포지타노 → 아말피", go: { m: "페리", meta: "약 25분 · 1인 약 €12", why: "스피아자 그란데 해변 끝 선착장." } },
+      { t: "14:30", x: "아말피 두오모, 레몬 가게 산책", go: { m: "입장권", meta: "두오모 '천국의 회랑' 1인 €5", why: "레몬 그라니타나 리몬첼로 한 잔." } },
+      { t: "17:00", x: "아말피 → 소렌토", go: { m: "페리", meta: "약 1시간 · 1인 약 €23", why: "마지막 배가 17:00 전후라 놓치면 안 됩니다. 결항·매진 시 SITA 버스(아말피 → 소렌토, 약 1시간 40분, 1인 약 €5)." } },
+      { t: "19:00", x: "소렌토 저녁" }
     ],
-    plan: "<strong>오전</strong> 아카데미아 미술관의 다비드상, 두오모. <strong>오후</strong> 우피치 미술관(보티첼리 ‘비너스의 탄생’). <strong>해 질 녘</strong> 미켈란젤로 광장. <strong>저녁</strong> 비스테카 알라 피오렌티나.",
-    tip: "비스테카는 1kg 단위로 주문합니다. 2인에게 1kg 하나가 알맞고, kg당 €50~70.",
-    lines: [
-      { c: "ticket", l: "우피치 미술관 1인 €25 (3~10월)", v: [50, 50, 50] },
-      { c: "ticket", l: "아카데미아 미술관 1인 €16 + 예약비 €4", v: [40, 40, 40] },
-      { c: "ticket", l: ["두오모 종탑 조토 패스 1인 €20", "쿠폴라 포함 브루넬레스키 패스 1인 €30", "쿠폴라 포함 브루넬레스키 패스 1인 €30"], v: [40, 60, 60] },
-      { c: "ticket", l: "미술관 프라이빗 가이드 반나절", v: [0, 0, 300] },
-      { c: "transport", l: ["버스", "버스", "택시"], v: [4, 4, 30] }
+    costs: [
+      { c: "transit", l: "페리 3구간 1인 약 €57 × 2", v: 114 },
+      { c: "transit", l: "마리나 피콜라 엘리베이터 왕복 (2인)", v: 5 },
+      { c: "ticket", l: "아말피 두오모 1인 €5 × 2", v: 10 },
+      { c: "meal", l: "포지타노 점심", v: 70 },
+      { c: "meal", l: "레몬 간식·리몬첼로", v: 15 },
+      { c: "meal", l: "저녁", v: 80 }
     ] },
 
-  { title: "토스카나 언덕과 와인", where: "피렌체 → 시에나 · 키안티 · 발 도르차", stay: "florence", meal: 1,
-    moves: [
-      { mode: "버스", what: "피렌체 → 시에나 급행버스", meta: "약 1시간 15분 · 1인 편도 약 €9", why: "기차역보다 시에나 구시가에 가깝게 내려 줍니다.", t: [0] },
-      { mode: "그룹 투어", what: "키안티 또는 발 도르차 와이너리 투어", meta: "8~9시간 · 1인 €130~180", why: "피렌체 픽업, 와이너리 2곳 시음과 점심이 포함된 상품이 많습니다.", t: [1] },
-      { mode: "프라이빗", what: "전용 기사 + 와이너리 프라이빗 투어", meta: "하루 · 2인 약 €700~900", why: "몬탈치노, 피엔차, 사이프러스 길을 원하는 대로 엮을 수 있습니다.", t: [2] }
+  { dow: "토", title: "소렌토 → 폼페이 → 로마", stay: ["로마 숙소", "todo"],
+    items: [
+      { t: "08:00", x: "조식, 체크아웃" },
+      { t: "09:00", x: "소렌토 → 폼페이 스카비", go: { m: "사철 · 치르쿰베수비아나", meta: "약 30분 · 1인 약 €3", why: "소렌토역에서 나폴리행. 'Pompei Scavi – Villa dei Misteri'역 하차, 바로 앞이 유적 입구(포르타 마리나). 좌석이 없을 수 있고 소매치기 주의." } },
+      { t: "09:45", x: "입구에 짐 맡기고 폼페이 유적", go: { m: "입장권", meta: "1인 €18 · 약 3시간", why: "공식 사이트 예약, 이름 기재 티켓이라 여권 지참. 그늘이 없으니 물과 모자. 큰 캐리어를 안 받으면 역 앞 사설 보관소." } },
+      { t: "13:00", x: "점심" },
+      { t: "14:00", x: "폼페이 → 나폴리 가리발디", go: { m: "사철 · 치르쿰베수비아나", meta: "약 40분 · 1인 약 €3", why: "종점 바로 전 'Garibaldi'에서 내리면 나폴리 중앙역 지하입니다. 에스컬레이터로 올라가면 고속열차 플랫폼." } },
+      { t: "15:00", x: "나폴리 중앙역 → 로마 테르미니", go: { m: "고속열차 · Frecciarossa 또는 Italo", meta: "약 1시간 10분 · 1인 €20~55", why: "환승 시간 여유가 빠듯하면 15:30 열차로. 미리 사면 €20대." } },
+      { t: "16:30", x: "로마 도착, 호텔 체크인", go: { m: "지하철 또는 택시", meta: "지하철 1회 €1.50 · 택시 €10~20", why: "테르미니 택시는 공식 승강장에서만. 호객 기사 무시." } },
+      { t: "18:00", x: "트레비 분수 · 판테온 저녁 산책, 저녁", go: { m: "도보", meta: "트레비 무료 · 판테온 1인 €5", why: "판테온은 저녁 7시쯤 마지막 입장. 트레비는 밤이 덜 붐빕니다." } }
     ],
-    plan: "시에나 캄포 광장, 사이프러스 나무가 늘어선 언덕길, 브루넬로 디 몬탈치노 시음. 사진 찍기 가장 좋은 날입니다.",
-    lines: [
-      { c: "transport", l: "피렌체 ↔ 시에나 버스 왕복", v: [36, 0, 0] },
-      { c: "ticket", l: ["시에나 두오모 통합권 1인 약 €16", "와이너리 그룹 투어 2인", "프라이빗 와이너리 투어"], v: [32, 320, 800] }
+    costs: [
+      { c: "transit", l: "치르쿰베수비아나 2구간 (2인)", v: 12 },
+      { c: "ticket", l: "폼페이 1인 €18 × 2", v: 36 },
+      { c: "ticket", l: "짐 보관 (필요 시)", v: 10 },
+      { c: "meal", l: "점심", v: 40 },
+      { c: "transit", l: "나폴리 → 로마 고속열차 1인 약 €35 × 2", v: 70 },
+      { c: "transit", l: "테르미니 → 호텔 택시", v: 15 },
+      { c: "ticket", l: "판테온 1인 €5 × 2", v: 10 },
+      { c: "hotel", l: "로마 4성 2박 (예약 전, 1박 약 €280)", v: 560 },
+      { c: "tax", l: "로마 도시세 1인 약 €7.5 × 2명 × 2박", v: 30 },
+      { c: "meal", l: "저녁", v: 80 }
     ] },
 
-  { title: "로마 공항으로, 출국", where: "피렌체 → 로마 피우미치노 → 인천", stay: null, meal: .5,
-    moves: [
-      { mode: "고속열차", what: "피렌체 S.M.N. → 로마 테르미니", meta: "1시간 32분 · 1인 €25~50 (비즈니스 €60~90)", why: "일부 시즌엔 피렌체에서 피우미치노 공항까지 바로 가는 고속열차도 있으니 예약할 때 확인하세요." },
-      { mode: "기차", what: "로마 테르미니 → 피우미치노 공항", meta: "32분 · 1인 €14", why: "출발 3시간 전 공항 도착을 목표로.", t: [0, 1] },
-      { mode: "택시", what: "로마 테르미니 → 피우미치노 공항", meta: "40~60분 · 정액 €55", why: "짐이 많다면 편합니다.", t: [2] },
-      { mode: "항공", what: "로마(FCO) → 인천(ICN)", meta: "직항 약 12시간", why: "저녁 출발 편은 다음 날 오후 인천 도착." }
+  { dow: "일", title: "로마 · 바티칸", stay: ["로마 숙소", "todo"],
+    items: [
+      { t: "08:00", x: "바티칸: 성 베드로 대성당·광장 (박물관은 마지막 일요일만 개방)", go: { m: "지하철 · A선", meta: "테르미니 → 오타비아노 약 15분 · 1회 €1.50", why: "대성당은 무료, 아침 일찍 가면 보안검색 줄이 짧습니다. 쿠폴라 전망대는 1인 약 €10~17(엘리베이터+계단 551단 중 320단)." } },
+      { t: "12:30", x: "점심" },
+      { t: "14:30", x: "나보나 광장 · 스페인 계단", go: { m: "도보", meta: "바티칸 → 나보나 25분 · 나보나 → 스페인 계단 20분", why: "산탄젤로 다리를 건너 가면 됩니다. 스페인 계단에 앉거나 먹으면 벌금." } },
+      { t: "17:00", x: "휴식", go: { m: "지하철 · A선", meta: "스파냐 → 테르미니 약 5분 · €1.50", why: "" } },
+      { t: "19:00", x: "트라스테베레에서 저녁", go: { m: "버스·트램 또는 택시", meta: "트램 8번 · €1.50 / 택시 €15 안팎", why: "베네치아 광장에서 8번 트램. 돌아올 땐 택시가 편합니다." } }
     ],
-    plan: "<strong>오전</strong> 산 로렌초 시장과 가죽 공방에서 쇼핑 후 이동.",
-    tip: "면세 환급(Tax Free)은 공항에서 짐 부치기 전에 세관 도장부터 받으세요. 한 매장 €70 이상 구매 시 대상입니다.",
-    lines: [
-      { c: "transport", l: ["피렌체 → 로마 기차 2등석", "피렌체 → 로마 기차 2등석", "피렌체 → 로마 기차 비즈니스석"], v: [70, 100, 180] },
-      { c: "transport", l: ["테르미니 → 공항 기차", "테르미니 → 공항 기차", "테르미니 → 공항 택시"], v: [28, 28, 55] }
+    costs: [
+      { c: "transit", l: "지하철·트램 약 5회 (2인)", v: 15 },
+      { c: "transit", l: "트라스테베레 귀가 택시", v: 15 },
+      { c: "ticket", l: "성 베드로 쿠폴라 1인 약 €15 × 2", v: 30 },
+      { c: "meal", l: "점심", v: 50 },
+      { c: "meal", l: "저녁", v: 90 }
     ] },
 
-  { title: "인천 도착", where: "인천", stay: null, meal: 0,
-    moves: [], plan: "오후 인천 도착. Ben tornati, 잘 다녀오셨습니다.", lines: [] }
+  { dow: "월", title: "로마 → 공항, 출국", stay: null,
+    items: [
+      { t: "08:30", x: "조식, 체크아웃하고 짐 맡기기" },
+      { t: "09:30", x: "콜로세움 · 포로 로마노 · 팔라티노", go: { m: "지하철 B선 + 입장권", meta: "테르미니 → 콜로세오 2정거장 · 입장 1인 €18 (풀 익스피리언스 €24)", why: "공식 사이트 colosseo.it 시간 지정 예약, 판매 오픈 날 바로 사세요. 이름 기재 티켓이라 여권 지참." } },
+      { t: "13:00", x: "점심 (몬티 지구)" },
+      { t: "14:30", x: "진실의 입 · 캄피돌리오 광장 산책 또는 쇼핑", go: { m: "도보", meta: "콜로세움에서 20분 · 진실의 입 €2 기부", why: "진실의 입은 줄이 길면 철창 밖에서 사진만 찍어도 충분합니다." } },
+      { t: "16:00", x: "호텔에서 짐 찾기", go: { m: "택시 또는 버스", meta: "택시 €15 안팎", why: "" } },
+      { t: "17:00", x: "테르미니 → 피우미치노 공항", go: { m: "기차 · 레오나르도 익스프레스", meta: "약 32분 · 1인 €14", why: "테르미니 23·24번 플랫폼 쪽. 15~30분 간격. 대안: 택시 정액 €55." } },
+      { t: "18:00", x: "공항 도착, 택스 리펀드 · 체크인", go: { m: "택스 리펀드", meta: "한 매장 €70 이상 구매분", why: "짐 부치기 전에 3터미널 세관(Customs)에서 도장부터. 구매 물건을 보여 달라고 할 수 있으니 기내용 가방에." } },
+      { t: "21:00", x: "대한항공 출발 → 다음 날 인천 도착" }
+    ],
+    costs: [
+      { c: "transit", l: "지하철 2회 (2인)", v: 6 },
+      { c: "ticket", l: "콜로세움 1인 €18 × 2", v: 36 },
+      { c: "meal", l: "점심", v: 40 },
+      { c: "transit", l: "호텔 → 테르미니 택시", v: 15 },
+      { c: "transit", l: "레오나르도 익스프레스 1인 €14 × 2", v: 28 },
+      { c: "meal", l: "공항 저녁", v: 40 }
+    ] }
 ];
 
 const eur = n => "€" + Math.round(n).toLocaleString("ko-KR");
 const krw = n => "약 " + Math.round(n / 10000).toLocaleString("ko-KR") + "만 원";
-const pick = (x, t) => Array.isArray(x) ? x[t] : x;
-let tier = 1;
-try { const s = localStorage.getItem("italia-tier"); if (s !== null && [0, 1, 2].includes(+s)) tier = +s; } catch (e) {}
-
-function dayLines(d, t) {
-  const out = d.lines.map(x => ({ c: x.c, l: pick(x.l, t), v: x.v[t] })).filter(x => x.v > 0);
-  if (d.stay) {
-    const h = hotels[d.stay];
-    out.push({ c: "hotel", l: `${h.name} ${stars[t]} 호텔 1박`, v: h.v[t] });
-    out.push({ c: "tax", l: `도시세 1인 €${h.tax[t]} × 2`, v: h.tax[t] * 2 });
-  }
-  if (d.meal) out.push({ c: "meal", l: d.meal < 1 ? "식비 (반나절)" : "식비 (카페·점심·저녁)", v: mealPerDay[t] * d.meal });
-  return out;
-}
 
 function render() {
-  const rateEl = document.getElementById("rate");
-  const rate = Math.max(500, +rateEl.value || 1600);
-  document.querySelectorAll("#tier button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.t === tier));
-
+  const rate = Math.max(500, +document.getElementById("rate").value || 1600);
   const sums = Object.fromEntries(Object.keys(cats).map(k => [k, 0]));
-  sums.misc = misc[tier];
   document.getElementById("days").innerHTML = days.map((d, i) => {
-    const ls = dayLines(d, tier);
-    ls.forEach(x => sums[x.c] += x.v);
-    const total = ls.reduce((a, x) => a + x.v, 0);
-    const moves = d.moves.filter(m => !m.t || m.t.includes(tier));
-    return `<article class="day">
+    const total = d.costs.reduce((a, x) => a + (x.v || 0), 0);
+    d.costs.forEach(x => { if (x.v) sums[x.c] += x.v; });
+    const stay = d.stay ? `<span class="stay ${d.stay[1]}">${d.stay[0]} · ${d.stay[1] === "paid" ? "결제 완료" : "예약 전"}</span>` : `<span class="stay">기내 1박</span>`;
+    return `<article class="day" id="day-${i + 1}">
       <div class="day-num"><small>DAY</small>${String(i + 1).padStart(2, "0")}</div>
       <div class="day-body">
-        <div><h3>${d.title}</h3><span class="where">${d.where}</span></div>
-        ${moves.length ? `<ul class="moves">${moves.map(m => `<li class="move"><span class="mode">${m.mode}</span>
-          <div><b>${m.what}</b><div class="meta">${m.meta}</div><div class="why">${m.why}</div></div></li>`).join("")}</ul>` : ""}
-        <p class="plan">${d.plan}</p>
-        ${d.tip ? `<p class="tip">${d.tip}</p>` : ""}
-        ${ls.length ? `<ul class="cost">${ls.map(x => `<li><span>${x.l}</span><span>${eur(x.v)}</span></li>`).join("")}
-          <li class="total"><span>이날 합계 (2인)</span><span>${eur(total)} · ${krw(total * rate)}</span></li></ul>` : ""}
+        <div class="day-head"><h3>${d.title}</h3><span class="dow">(${d.dow})</span>${stay}</div>
+        <ol class="tl">${d.items.map(it => `<li><time>${it.t}</time><div>${it.x}${it.go ? `<div class="go">
+          <span class="mode">${it.go.m}</span><span class="meta">${it.go.meta}</span>${it.go.why ? `<span class="why">${it.go.why}</span>` : ""}</div>` : ""}</div></li>`).join("")}</ol>
+        <ul class="cost">${d.costs.map(x => `<li class="${x.paid ? "is-paid" : ""}"><span>${x.l}</span><span>${x.paid ? "결제 완료" : eur(x.v)}</span></li>`).join("")}
+          <li class="total"><span>이날 쓸 돈 (2인)</span><span>${eur(total)} · ${krw(total * rate)}</span></li></ul>
       </div></article>`;
   }).join("");
 
   const eurTotal = Object.values(sums).reduce((a, b) => a + b, 0);
-  const all = eurTotal * rate + flightsKRW[tier];
-  document.getElementById("grand-krw").textContent = krw(all);
-  document.getElementById("grand-sub").textContent = `1인 ${krw(all / 2)} · 현지 비용 ${eur(eurTotal)} + 항공권`;
+  document.getElementById("grand-krw").textContent = krw(eurTotal * rate);
+  document.getElementById("grand-sub").textContent = `${eur(eurTotal)} · 1인 ${krw(eurTotal * rate / 2)}`;
   document.getElementById("breakdown").innerHTML = `<tbody>
-    <tr><th>항공권 (${flightNote[tier]})</th><td>—</td><td class="krw">${krw(flightsKRW[tier])}</td></tr>
     ${Object.entries(cats).map(([k, n]) => `<tr><th>${n}</th><td>${eur(sums[k])}</td><td class="krw">${krw(sums[k] * rate)}</td></tr>`).join("")}
-    <tr><th>합계</th><td>${eur(eurTotal)}</td><td class="krw">${krw(all)}</td></tr></tbody>`;
+    <tr class="sum"><th>합계</th><td>${eur(eurTotal)}</td><td class="krw">${krw(eurTotal * rate)}</td></tr>
+    <tr class="paid"><th>제외: 대한항공 왕복, 글램 호텔 1박, 포데레 브리지오 2박</th><td></td><td class="krw">결제 완료</td></tr></tbody>`;
 }
-document.getElementById("tier").addEventListener("click", e => {
-  const b = e.target.closest("button"); if (!b) return;
-  tier = +b.dataset.t;
-  try { localStorage.setItem("italia-tier", tier); } catch (e2) {}
-  render();
-});
 document.getElementById("rate").addEventListener("input", render);
 render();
-
 const cities = [
   { id: "roma", it: "Roma", kr: "로마 · 라치오주", desc: "2,700년 넘게 사람이 살아온 '영원의 도시'. 고대 유적과 바로크 광장, 그리고 도시 안의 나라 바티칸이 한 동네처럼 붙어 있습니다.",
     see: "콜로세움, 포로 로마노, 판테온, 트레비 분수, 바티칸 박물관", eat: "카르보나라, 카초 에 페페, 수플리", tip: "판테온은 지붕 구멍(오쿨루스)으로 비가 그대로 들어옵니다. 바닥 배수구를 찾아보세요.", season: "4–5월, 10월" },
