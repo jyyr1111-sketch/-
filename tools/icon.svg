@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#1f4e8c"/>
-  <text x="256" y="318" text-anchor="middle" font-family="Bodoni Moda, Didot, 'Liberation Serif', Georgia, serif" font-style="italic" font-size="150" textLength="330" lengthAdjust="spacingAndGlyphs" fill="#f8f6f2">Italia</text>
-  <g transform="translate(166 360)">
-    <rect width="60" height="16" fill="#2f8a55"/>
-    <rect x="60" width="60" height="16" fill="#f8f6f2"/>
-    <rect x="120" width="60" height="16" fill="#d43a3f"/>
-  </g>
-</svg>
