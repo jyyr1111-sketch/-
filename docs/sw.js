@@ -1,5 +1,5 @@
 // 오프라인용 캐시. 버전은 build_app.py가 내용 해시로 채운다.
-const CACHE = "italia-ce9d81a122";
+const CACHE = "italia-154a63ee6a";
 const CORE = ["./", "index.html", "trip.json", "manifest.webmanifest", "icon.svg", "icon-180.png", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", e => {

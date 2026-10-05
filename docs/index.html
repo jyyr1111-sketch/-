@@ -102,6 +102,11 @@ thead th { font-family: var(--body); font-weight: 500; font-size: 13px; color: v
 tbody th { text-align: left; font-family: var(--body); font-weight: 500; font-size: 14px; }
 tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 td.self { color: var(--line); }
+table.legs { min-width: 640px; }
+table.legs th, table.legs td { text-align: left; vertical-align: top; }
+table.legs tbody th { font-weight: 400; }
+table.legs td:nth-child(5) { color: var(--accent); }
+table.legs a, .city dd a { color: var(--accent); }
 td.fast { color: var(--accent); font-weight: 500; }
 .note { font-size: 13px; color: var(--muted); }
 
@@ -231,15 +236,15 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; font-size: 13px; 
 <div class="wrap">
   <header>
     <div class="tricolore" aria-hidden="true"><span></span><span></span><span></span></div>
-    <span class="eyebrow">Repubblica Italiana · 이탈리아 공화국</span>
+    <span class="eyebrow">Luna di miele · Milano → Roma</span>
     <h1>Viaggio in <em>Italia</em></h1>
-    <p class="lead">알프스에서 시칠리아까지 장화 모양으로 뻗은 나라. 도시마다 말투도, 파스타 모양도, 커피 마시는 법도 다릅니다. 밀라노에서 로마까지 8박 10일 신혼여행의 시간대별 이동 방법과 비용, 도시 안내, 기차 시간표, 지역 음식, 꼭 필요한 이탈리아어를 한 장에 모았습니다.</p>
+    <p class="lead">밀라노에서 시작해 피렌체, 토스카나 시골길, 아말피 해안을 지나 로마에서 끝나는 8박 10일 신혼여행입니다. 시간대별 이동 방법과 비용, 들르는 곳 안내, 그 지역에서 먹을 음식, 여행 중에 쓸 이탈리아어를 한 장에 모았습니다.</p>
     <div class="facts">
-      <div><b>Roma</b><span>수도</span></div>
-      <div><b>20</b><span>주(Regioni)</span></div>
-      <div><b>약 5,900만</b><span>인구</span></div>
-      <div><b>60</b><span>유네스코 세계유산 (세계 최다)</span></div>
-      <div><b>EUR €</b><span>통화</span></div>
+      <div><b>8박 10일</b><span>일요일 출국, 다음 주 화요일 귀국</span></div>
+      <div><b>5곳</b><span>숙소 (밀라노·피렌체·몬탈치노·소렌토·로마)</span></div>
+      <div><b>약 720km</b><span>토스카나 렌터카 3일</span></div>
+      <div><b>2번</b><span>고속열차</span></div>
+      <div><b>3번</b><span>아말피 해안 페리</span></div>
     </div>
   </header>
 
@@ -299,9 +304,9 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; font-size: 13px; 
 
   <section aria-labelledby="cities-h">
     <div class="sec-head">
-      <span class="eyebrow">Le città</span>
-      <h2 id="cities-h">도시 고르기</h2>
-      <p>탭을 눌러 도시를 바꿔 보세요.</p>
+      <span class="eyebrow">Le tappe</span>
+      <h2 id="cities-h">들르는 곳 미리 보기</h2>
+      <p>일정 순서대로 다섯 지역입니다. 탭을 눌러 바꿔 보세요.</p>
     </div>
     <div class="tabs" role="tablist" id="tabs"></div>
     <div id="city-panel" role="tabpanel"></div>
@@ -309,21 +314,20 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; font-size: 13px; 
 
   <section aria-labelledby="train-h">
     <div class="sec-head">
-      <span class="eyebrow">Frecciarossa · 고속철도</span>
-      <h2 id="train-h">도시 간 기차 시간</h2>
-      <p>대부분의 여행자는 도시 사이를 고속열차로 이동합니다. 아래는 가장 빠른 직행편 기준 대략적인 소요 시간입니다.</p>
+      <span class="eyebrow">Spostamenti</span>
+      <h2 id="train-h">이동 한눈에</h2>
+      <p>일정에 적힌 교통편만 모았습니다. 위 일정을 고치면 이 표도 같이 바뀝니다.</p>
     </div>
     <div class="table-wrap">
-      <table id="train"></table>
+      <table id="train" class="legs"><tbody><tr><td>일정을 불러오는 중입니다.</td></tr></tbody></table>
     </div>
-    <p class="note">파란색은 1시간 30분 이내 구간. 실제 시간은 편성과 정차역에 따라 달라지니 Trenitalia·Italo에서 확인하세요.</p>
   </section>
 
   <section aria-labelledby="food-h">
     <div class="sec-head">
       <span class="eyebrow">Cucina regionale</span>
-      <h2 id="food-h">지역마다 다른 한 접시</h2>
-      <p>“이탈리아 음식”은 없고 지역 음식만 있다는 말이 있습니다. 그 지역에서 먹어야 하는 대표 요리입니다.</p>
+      <h2 id="food-h">가는 곳마다 먹을 것</h2>
+      <p>이탈리아는 지역마다 음식이 다릅니다. 이번 동선에서 그 지역에 있을 때 먹어야 할 것들입니다.</p>
     </div>
     <div class="food" id="food"></div>
   </section>
@@ -332,7 +336,7 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; font-size: 13px; 
     <div class="sec-head">
       <span class="eyebrow">Parole utili</span>
       <h2 id="phrase-h">여행 이탈리아어</h2>
-      <p>카드를 누르면 발음과 뜻이 나옵니다.</p>
+      <p>이번 일정에서 실제로 쓸 말만 골랐습니다. 카드를 누르면 발음과 뜻이 나옵니다.</p>
     </div>
     <div class="phrases" id="phrases"></div>
   </section>
@@ -344,17 +348,17 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; font-size: 13px; 
     </div>
     <ul class="rules">
       <li><b>Cappuccino</b><span>우유가 든 커피는 아침 음료입니다. 오전 11시 이후, 특히 식사 뒤에는 에스프레소(un caffè)를 시키는 게 현지식입니다.</span></li>
-      <li><b>Al banco</b><span>바(bar)에서 서서 마시면 테이블보다 쌉니다. 먼저 계산대(cassa)에서 결제하고 영수증을 바리스타에게 건네세요.</span></li>
-      <li><b>Coperto</b><span>식당 계산서의 자릿세(보통 1~4유로)는 바가지가 아니라 정상 항목입니다. 팁은 필수가 아닙니다.</span></li>
-      <li><b>Convalida</b><span>지역 열차표는 탑승 전 플랫폼의 초록색 기계에 넣어 각인해야 합니다. 안 하면 벌금이 나옵니다.</span></li>
-      <li><b>ZTL</b><span>역사 지구는 대부분 차량 제한 구역(Zona a Traffico Limitato)입니다. 렌터카로 들어가면 몇 달 뒤 과태료 고지서가 옵니다.</span></li>
-      <li><b>Chiese</b><span>성당에 들어갈 때는 어깨와 무릎을 가리세요. 바티칸과 피렌체 두오모는 입구에서 확인합니다.</span></li>
+      <li><b>Al banco</b><span>바(bar)에서 서서 마시면 테이블보다 쌉니다. 먼저 계산대(cassa)에서 결제하고 영수증을 바리스타에게 건네세요. 포지타노 해변가는 앉으면 두세 배입니다.</span></li>
+      <li><b>Coperto</b><span>식당 계산서의 자릿세(보통 1~4유로)는 정상 항목입니다. 팁은 필수가 아닙니다.</span></li>
+      <li><b>Convalida</b><span>7일차 치르쿰베수비아나(소렌토 → 폼페이 → 나폴리) 종이표는 타기 전에 개찰기에 넣어 각인하세요. 고속열차(밀라노 → 피렌체, 나폴리 → 로마)는 좌석 지정이라 각인이 필요 없습니다.</span></li>
+      <li><b>Benzina</b><span>3~5일차 렌터카 주유. 'Fai da te'(셀프)가 'Servito'(직원 주유)보다 리터당 €0.1~0.2 쌉니다. 시골 주유소는 점심시간·일요일에 무인 기계만 돌아가고 해외 카드를 거부하기도 하니 미리 넣어 두세요.</span></li>
+      <li><b>Chiese</b><span>성당에 들어갈 때는 어깨와 무릎을 가리세요. 2일차 밀라노 두오모, 3일차 시에나 두오모, 8일차 성 베드로 대성당 모두 입구에서 확인합니다.</span></li>
     </ul>
   </section>
 
   <footer>
     <span>Buon viaggio! 즐거운 여행 되세요.</span>
-    <span>수치는 2020년대 기준 대략값입니다.</span>
+    <span>금액과 소요 시간은 2025~2026년 기준 대략값입니다.</span>
   </footer>
 </div>
 
@@ -428,6 +432,7 @@ function renderView() {
       </div></article>`;
   }).join("");
 
+  renderLegs();
   const future = Object.values(sums).reduce((a, b) => a + b, 0);
   const unknownPaid = paidList.filter(x => !hasV(x)).length;
   document.getElementById("grand-krw").textContent = krw(future * rate);
@@ -678,18 +683,16 @@ document.getElementById("reset-btn").addEventListener("click", async e => {
 });
 
 const cities = [
-  { id: "roma", it: "Roma", kr: "로마 · 라치오주", desc: "2,700년 넘게 사람이 살아온 '영원의 도시'. 고대 유적과 바로크 광장, 그리고 도시 안의 나라 바티칸이 한 동네처럼 붙어 있습니다.",
-    see: "콜로세움, 포로 로마노, 판테온, 트레비 분수, 바티칸 박물관", eat: "카르보나라, 카초 에 페페, 수플리", tip: "판테온은 지붕 구멍(오쿨루스)으로 비가 그대로 들어옵니다. 바닥 배수구를 찾아보세요.", season: "4–5월, 10월" },
-  { id: "firenze", it: "Firenze", kr: "피렌체 · 토스카나주", desc: "르네상스가 시작된 도시. 메디치 가문의 후원 아래 브루넬레스키, 보티첼리, 미켈란젤로가 활동했고 표준 이탈리아어도 이곳 방언에서 나왔습니다.",
-    see: "두오모 쿠폴라, 우피치 미술관, 아카데미아(다비드상), 베키오 다리", eat: "비스테카 알라 피오렌티나, 람프레도토", tip: "두오모 쿠폴라는 463계단입니다. 해 질 녘엔 미켈란젤로 광장에서 도시 전체가 보입니다.", season: "4–6월, 9–10월" },
-  { id: "venezia", it: "Venezia", kr: "베네치아 · 베네토주", desc: "118개 섬을 400여 개의 다리로 이은 물의 도시. 자동차가 없고, 버스 대신 수상버스 바포레토가 다닙니다.",
-    see: "산 마르코 광장, 리알토 다리, 두칼레 궁전, 무라노·부라노 섬", eat: "사르데 인 사오르, 오징어 먹물 리소토, 치케티", tip: "당일 방문객은 성수기 특정 날짜에 입장료(5–10유로)를 내야 합니다. 출발 전 확인하세요.", season: "3–5월, 10–11월" },
-  { id: "milano", it: "Milano", kr: "밀라노 · 롬바르디아주", desc: "이탈리아의 경제와 패션 중심지. 고딕 대성당 바로 옆에 19세기 유리 아케이드가 있고, 저녁엔 아페리티보 문화가 살아 있습니다.",
-    see: "두오모, 비토리오 에마누엘레 2세 갈레리아, 최후의 만찬, 나빌리 운하", eat: "리소토 알라 밀라네세, 오소부코, 코톨레타", tip: "다빈치의 '최후의 만찬'은 15분 단위 소규모 입장이라 몇 주 전에 매진됩니다.", season: "4–6월, 9월" },
-  { id: "napoli", it: "Napoli", kr: "나폴리 · 캄파니아주", desc: "피자의 고향이자 베수비오 화산 아래의 활기찬 항구 도시. 폼페이와 아말피 해안으로 가는 출발점이기도 합니다.",
-    see: "스파카나폴리 거리, 국립고고학박물관, 폼페이, 산텔모 성", eat: "피자 마르게리타, 스포리아텔라, 바바", tip: "진짜 나폴리 피자는 화덕에서 60–90초 굽습니다. 반으로 접어 먹는 '포르타폴리오'도 있습니다.", season: "4–6월, 9–10월" },
-  { id: "palermo", it: "Palermo", kr: "팔레르모 · 시칠리아주", desc: "아랍, 노르만, 스페인 문화가 겹겹이 쌓인 시칠리아의 주도. 시장과 길거리 음식이 도시의 얼굴입니다.",
-    see: "몬레알레 대성당, 노르만 궁전, 발라로 시장, 콰트로 칸티", eat: "아란치나, 파넬레, 카놀리, 그라니타", tip: "시칠리아에선 아침으로 브리오슈에 그라니타를 곁들여 먹습니다.", season: "4–6월, 9–10월" }
+  { id: "milano", it: "Milano", kr: "밀라노 · 롬바르디아주", days: [1, 2], desc: "도착하는 날 밤과 다음 날 오전만 머뭅니다. 고딕 대성당 두오모와 바로 옆 유리 아케이드 갈레리아만 보고 피렌체로 넘어가는 짧은 일정입니다.",
+    see: "두오모 성당과 지붕 테라스, 갈레리아 비토리오 에마누엘레 2세", eat: "리소토 알라 밀라네세, 코톨레타 (2일차 점심)", tip: "두오모 테라스에 올라가면 성당 지붕의 첨탑 사이를 걸을 수 있습니다. 엘리베이터 패스로 예약하면 체력을 아낍니다." },
+  { id: "firenze", it: "Firenze", kr: "피렌체 · 토스카나주", days: [2, 3], desc: "르네상스가 시작된 도시. 월요일 오후에 도착해 하룻밤 묵습니다. 우피치와 아카데미아가 월요일 휴관이라 이번엔 거리와 광장, 일몰 위주로 봅니다.",
+    see: "두오모 외관, 시뇨리아 광장, 베키오 다리, 미켈란젤로 광장 일몰", eat: "비스테카 알라 피오렌티나 (2인 1kg)", tip: "다음 날 아침 보르고 오니산티에서 렌터카를 받으니 S.M.N.역과 오니산티 사이에 숙소를 잡으세요." },
+  { id: "toscana", it: "Toscana", kr: "시에나 · 몬탈치노 · 사투르니아 · 피엔자 · 치비타", days: [3, 4, 5], desc: "렌터카로 도는 사흘. 사이프러스 나무가 늘어선 발도르차 언덕, 브루넬로 와인 마을 몬탈치노, 노천 유황 온천 사투르니아, 다리로만 들어가는 절벽 마을 치비타까지 갑니다.",
+    see: "시에나 캄포 광장과 두오모, 몬탈치노 요새, 카스카테 델 물리노 온천, 피엔자 성벽길 일몰, 치비타 디 반뇨레조", eat: "피치 카초 에 페페, 페코리노 디 피엔자, 브루넬로 디 몬탈치노", tip: "숙소 포데레 브리지오 체크인은 15~19시. 운전자는 와인을 맛만 보세요(이탈리아 음주 기준 0.05%)." },
+  { id: "costiera", it: "Costiera", kr: "소렌토 · 포지타노 · 아말피 · 폼페이", days: [5, 6, 7], desc: "소렌토에 이틀 묵으며 배로 해안 마을을 돕니다. 바다에서 보는 절벽 마을이 이 여행의 하이라이트이고, 로마로 가는 날 폼페이 유적에 들릅니다.",
+    see: "포지타노 골목과 해변, 아말피 두오모, 소렌토 마리나 피콜라, 폼페이 유적", eat: "피자 마르게리타, 델리치아 알 리모네, 리몬첼로, 스포리아텔라", tip: "아말피에서 소렌토로 돌아오는 마지막 배는 보통 17시 전후입니다. 결항하면 SITA 버스로." },
+  { id: "roma", it: "Roma", kr: "로마 · 라치오주", days: [7, 8, 9], desc: "마지막 이틀 반. 일요일엔 바티칸과 트라스테베레, 출국하는 월요일 오전엔 콜로세움을 보고 저녁 비행기를 탑니다.",
+    see: "트레비 분수, 판테온, 성 베드로 대성당과 쿠폴라, 나보나 광장, 스페인 계단, 콜로세움, 포로 로마노", eat: "카르보나라, 카초 에 페페, 수플리", tip: "바티칸 박물관은 일요일 휴관(마지막 일요일만 무료 개방). 콜로세움은 이름 기재 티켓이라 여권을 챙기세요." }
 ];
 
 const tabs = document.getElementById("tabs");
@@ -708,7 +711,7 @@ function showCity(id) {
         <div><dt>볼거리</dt><dd>${c.see}</dd></div>
         <div><dt>먹거리</dt><dd>${c.eat}</dd></div>
         <div><dt>여행 팁</dt><dd>${c.tip}</dd></div>
-        <div><dt>추천 시기</dt><dd>${c.season}</dd></div>
+        <div><dt>우리 일정</dt><dd>${c.days.map(n => `<a href="#day-${n}">${n}일차</a>`).join(" · ")}</dd></div>
       </dl>
     </div>`;
   try { localStorage.setItem("italia-city", c.id); } catch (e) {}
@@ -729,44 +732,41 @@ tabs.addEventListener("keydown", e => {
 });
 let saved = null;
 try { saved = localStorage.getItem("italia-city"); } catch (e) {}
-showCity(saved || "roma");
+showCity(saved || "milano");
 
-// 고속열차 최단 직행 소요 시간(분), 대략값
-const stations = ["Milano", "Venezia", "Firenze", "Roma", "Napoli"];
-const mins = {
-  "Milano-Venezia": 145, "Milano-Firenze": 115, "Milano-Roma": 175, "Milano-Napoli": 265,
-  "Venezia-Firenze": 125, "Venezia-Roma": 235, "Venezia-Napoli": 330,
-  "Firenze-Roma": 92, "Firenze-Napoli": 175, "Roma-Napoli": 70
-};
-const fmt = m => `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, "0")}m`;
-const t = document.getElementById("train");
-t.innerHTML = `<thead><tr><th scope="col"></th>${stations.map(s => `<th scope="col">${s}</th>`).join("")}</tr></thead>
-<tbody>${stations.map(a => `<tr><th scope="row">${a}</th>${stations.map(b => {
-  if (a === b) return `<td class="self">—</td>`;
-  const m = mins[`${a}-${b}`] ?? mins[`${b}-${a}`];
-  return `<td class="${m <= 90 ? "fast" : ""}">${fmt(m)}</td>`;
-}).join("")}</tr>`).join("")}</tbody>`;
+// 일정의 교통편만 모아 '이동 한눈에' 표로
+const LEG = /기차|열차|지하철|버스|페리|자동차|렌터카|택시|사철|트램|항공|전용차|보트/;
+function renderLegs() {
+  const rows = [];
+  trip.days.forEach((d, i) => d.items.forEach(it => {
+    if (it.go && LEG.test(it.go.m || "")) rows.push({ day: i + 1, t: it.t, x: it.x, m: it.go.m, meta: it.go.meta });
+  }));
+  document.getElementById("train").innerHTML = rows.length
+    ? `<thead><tr><th scope="col">일차</th><th scope="col">시간</th><th scope="col">구간</th><th scope="col">수단</th><th scope="col">소요·요금</th></tr></thead>
+       <tbody>${rows.map(r => `<tr><td><a href="#day-${r.day}">${r.day}일차</a></td><td>${esc(r.t)}</td><th scope="row">${esc(r.x)}</th><td>${esc(r.m)}</td><td>${esc(r.meta)}</td></tr>`).join("")}</tbody>`
+    : `<tbody><tr><td>일정에 교통편이 없습니다.</td></tr></tbody>`;
+}
 
 const food = [
-  ["Lazio", "Carbonara", "관치알레(돼지 볼살), 달걀 노른자, 페코리노, 후추. 크림은 넣지 않습니다."],
-  ["Emilia-Romagna", "Tagliatelle al ragù", "볼로냐의 진짜 라구 파스타. 스파게티가 아니라 넓은 생면에 비빕니다."],
-  ["Liguria", "Trofie al pesto", "제노바 바질, 잣, 파르미자노로 만든 페스토에 꼬인 모양의 짧은 파스타."],
-  ["Campania", "Pizza margherita", "토마토, 모차렐라, 바질. 1889년 마르게리타 왕비에게 바쳤다는 이야기가 전해집니다."],
-  ["Sicilia", "Arancine", "속을 채워 튀긴 주먹밥. 팔레르모에선 둥근 여성형 arancina, 카타니아에선 arancino라 부릅니다."],
-  ["Piemonte", "Tajarin al tartufo", "노른자를 듬뿍 넣은 가는 생면 위에 가을 알바산 흰 트러플을 갈아 올립니다."]
+  ["Lombardia · 1~2일차", "Risotto alla milanese", "사프란으로 노랗게 물들인 밀라노식 리소토. 뼈째 찐 송아지 정강이 오소부코와 함께 나오기도 합니다."],
+  ["Toscana · 2일차 피렌체", "Bistecca alla fiorentina", "키아니나 소의 티본을 숯불에 겉만 굽습니다. 굽기는 무조건 레어, 1kg 단위로 주문합니다."],
+  ["Toscana · 3~4일차", "Pici cacio e pepe · Brunello", "손으로 늘인 굵은 생면 피치에 페코리노와 후추. 몬탈치노에선 브루넬로 와인을 곁들이세요."],
+  ["Toscana · 4일차 피엔자", "Pecorino di Pienza", "양젖 치즈. 숙성 기간별로 맛이 달라서 가게에서 시식해 보고 고르면 됩니다."],
+  ["Campania · 5~7일차", "Pizza margherita · Limone", "나폴리식 피자와 소렌토 레몬. 레몬 크림 케이크 델리치아 알 리모네와 식후주 리몬첼로까지."],
+  ["Lazio · 7~9일차", "Carbonara", "관찰레(돼지 볼살), 달걀 노른자, 페코리노, 후추. 크림은 넣지 않습니다. 트라스테베레 저녁에."]
 ];
 document.getElementById("food").innerHTML = food.map(([r, n, d]) =>
   `<article><span class="region">${r}</span><h3>${n}</h3><p>${d}</p></article>`).join("");
 
 const phrases = [
-  ["Buongiorno", "본조르노", "안녕하세요 (오전~오후)"],
-  ["Grazie mille", "그라치에 밀레", "정말 고맙습니다"],
-  ["Per favore", "페르 파보레", "부탁합니다 / 주세요"],
+  ["Siamo in luna di miele", "시아모 인 루나 디 미엘레", "저희 신혼여행 중이에요 (호텔·식당에서 말하면 디저트나 와인이 나오기도)"],
+  ["Abbiamo una prenotazione", "아비아모 우나 프레노타치오네", "예약했어요 (체크인·식당)"],
+  ["Il pieno, per favore", "일 피에노, 페르 파보레", "기름 가득 넣어 주세요 (3~5일차 렌터카)"],
+  ["Dov'è il parcheggio?", "도베 일 파르케조?", "주차장이 어디예요?"],
+  ["Un biglietto per Pompei Scavi", "운 빌리에토 페르 폼페이 스카비", "폼페이 스카비 표 한 장이요 (7일차)"],
   ["Il conto, per favore", "일 콘토, 페르 파보레", "계산서 주세요"],
-  ["Quanto costa?", "콴토 코스타?", "얼마예요?"],
-  ["Dov'è la stazione?", "도베 라 스타치오네?", "기차역이 어디예요?"],
   ["Un caffè, per favore", "운 카페, 페르 파보레", "에스프레소 한 잔 주세요"],
-  ["Mi scusi", "미 스쿠지", "실례합니다"]
+  ["Grazie mille", "그라치에 밀레", "정말 고맙습니다"]
 ];
 const ph = document.getElementById("phrases");
 phrases.forEach(([it, say, ko], i) => {
