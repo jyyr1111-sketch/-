@@ -2,12 +2,13 @@
 """등록한 YouTube 채널의 새 영상을 찾아 자막을 받아 둔다 ('영상 정리' 탭 재료).
 
 사용법:
-  python3 stocks/youtube_new.py <out_dir> [--since YYYYMMDD] [--max N] [--init]
+  python3 stocks/youtube_new.py <out_dir> [--since YYYYMMDD] [--max N] [--init] [--only h1,h2] [--skip h1,h2]
 
 - stocks/youtube_channels.json 의 채널마다 최근 영상 목록을 보고, stocks/videos_seen.json 에
   없는 영상만 처리한다. filter 가 있는 채널은 제목·설명에 그 단어가 있는 영상만 남긴다.
 - --since 보다 오래된 영상은 정리하지 않고 본 것으로만 기록한다(오랜만에 돌려도 몰아서 정리하지 않게).
 - --init 은 지금 목록을 전부 본 것으로 기록만 하고 끝낸다.
+- --only / --skip 은 채널 handle 로 대상을 고른다(MBN골드는 아침, 나머지는 오후 실행).
 - 결과: <out_dir>/new_videos.json  [{id,url,title,channel,date,duration,description,transcript}]
   자막을 못 받은 영상은 transcript 가 빈 문자열이다. 메타데이터 조회 자체가 실패한 영상은
   seen 에 넣지 않아 다음 실행 때 다시 시도한다.
@@ -98,8 +99,11 @@ def main():
     since = a[a.index("--since") + 1] if "--since" in a else (datetime.now(KST) - timedelta(days=3)).strftime("%Y%m%d")
     cap = int(a[a.index("--max") + 1]) if "--max" in a else 8
     init = "--init" in a
+    only = a[a.index("--only") + 1].split(",") if "--only" in a else None
+    skip = a[a.index("--skip") + 1].split(",") if "--skip" in a else []
     os.makedirs(out_dir, exist_ok=True)
-    chans = json.load(open(CHANNELS, encoding="utf-8"))
+    chans = [c for c in json.load(open(CHANNELS, encoding="utf-8"))
+             if (only is None or c["handle"] in only) and c["handle"] not in skip]
     seen = json.load(open(SEEN, encoding="utf-8")) if os.path.exists(SEEN) else {}
     today = datetime.now(KST).strftime("%Y%m%d")
     found, log = [], []
