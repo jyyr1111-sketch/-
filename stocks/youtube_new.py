@@ -8,7 +8,7 @@
   없는 영상만 처리한다. filter 가 있는 채널은 제목·설명에 그 단어가 있는 영상만 남긴다.
 - --since 보다 오래된 영상은 정리하지 않고 본 것으로만 기록한다(오랜만에 돌려도 몰아서 정리하지 않게).
 - --init 은 지금 목록을 전부 본 것으로 기록만 하고 끝낸다.
-- --only / --skip 은 채널 handle 로 대상을 고른다(MBN골드는 아침, 나머지는 오후 실행).
+- --only / --skip 은 채널 key(없으면 handle)로 대상을 고른다.
 - 결과: <out_dir>/new_videos.json  [{id,url,title,channel,date,duration,description,transcript}]
   자막을 못 받은 영상은 transcript 가 빈 문자열이다. 메타데이터 조회 자체가 실패한 영상은
   seen 에 넣지 않아 다음 실행 때 다시 시도한다.
@@ -103,17 +103,15 @@ def main():
     skip = a[a.index("--skip") + 1].split(",") if "--skip" in a else []
     os.makedirs(out_dir, exist_ok=True)
     chans = [c for c in json.load(open(CHANNELS, encoding="utf-8"))
-             if (only is None or c["handle"] in only) and c["handle"] not in skip]
+             if (only is None or c.get("key", c["handle"]) in only) and c.get("key", c["handle"]) not in skip]
     seen = json.load(open(SEEN, encoding="utf-8")) if os.path.exists(SEEN) else {}
     today = datetime.now(KST).strftime("%Y%m%d")
     found, log = [], []
     for c in chans:
         items = [(v, t) for v, t in latest(c["handle"], c.get("scan", 12), c.get("tab", "videos")) if v not in seen]
-        # 제목만으로 걸러지는 채널은 정보 조회 없이 바로 제외(요청 수 절약)
+        # 제목만으로 걸러지는 채널은 정보 조회 없이 바로 제외(요청 수 절약).
+        # 같은 채널을 진행자별로 나눠 다른 시간에 돌리므로 seen 에는 기록하지 않는다.
         if c.get("title_only"):
-            for v, t in items:
-                if not match(c, t):
-                    seen[v] = "skip"
             items = [(v, t) for v, t in items if match(c, t)]
         ids = [v for v, _ in items]
         if init:
