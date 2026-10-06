@@ -33,10 +33,25 @@ def ytdlp(args, timeout=120):
     return r.returncode, r.stdout, r.stderr
 
 
-def latest_ids(handle, n):
+def latest(handle, n, tab="videos"):
     _, out, _ = ytdlp(["--flat-playlist", "--playlist-end", str(n), "--extractor-args", "youtube:lang=ko",
-                       "--print", "%(id)s", "https://www.youtube.com/@%s/videos" % handle])
-    return [l.strip() for l in out.splitlines() if l.strip()]
+                       "--print", "%(id)s\t%(title)s", "https://www.youtube.com/@%s/%s" % (handle, tab)])
+    return [tuple((l + "\t").split("\t")[:2]) for l in out.splitlines() if l.strip()]
+
+
+def match(c, text):
+    f = c.get("filter")
+    if not f:
+        return True
+    return any(w in text for w in ([f] if isinstance(f, str) else f))
+
+
+def kst_date(d):
+    # upload_date 는 UTC 기준이라 한국 아침 방송이 전날로 찍힌다 → 방송/업로드 시각을 KST 로 변환
+    ts = d.get("release_timestamp") or d.get("timestamp")
+    if ts:
+        return datetime.fromtimestamp(ts, KST).strftime("%Y%m%d")
+    return d.get("upload_date") or ""
 
 
 def meta(vid):
@@ -47,8 +62,9 @@ def meta(vid):
         return None
     d = json.loads(out)
     return {"id": vid, "url": "https://www.youtube.com/watch?v=" + vid, "title": d.get("title", ""),
-            "channel": d.get("channel", ""), "date": d.get("upload_date") or "",
-            "duration": d.get("duration") or 0, "description": d.get("description") or ""}
+            "channel": d.get("channel", ""), "date": kst_date(d),
+            "duration": d.get("duration") or 0, "description": d.get("description") or "",
+            "live": d.get("live_status") or ""}
 
 
 def transcript(vid, tmp):
@@ -80,7 +96,7 @@ def main():
     a = sys.argv[1:]
     out_dir = a[0]
     since = a[a.index("--since") + 1] if "--since" in a else (datetime.now(KST) - timedelta(days=3)).strftime("%Y%m%d")
-    cap = int(a[a.index("--max") + 1]) if "--max" in a else 6
+    cap = int(a[a.index("--max") + 1]) if "--max" in a else 8
     init = "--init" in a
     os.makedirs(out_dir, exist_ok=True)
     chans = json.load(open(CHANNELS, encoding="utf-8"))
@@ -88,7 +104,14 @@ def main():
     today = datetime.now(KST).strftime("%Y%m%d")
     found, log = [], []
     for c in chans:
-        ids = [v for v in latest_ids(c["handle"], c.get("scan", 12)) if v not in seen]
+        items = [(v, t) for v, t in latest(c["handle"], c.get("scan", 12), c.get("tab", "videos")) if v not in seen]
+        # 제목만으로 걸러지는 채널은 정보 조회 없이 바로 제외(요청 수 절약)
+        if c.get("title_only"):
+            for v, t in items:
+                if not match(c, t):
+                    seen[v] = "skip"
+            items = [(v, t) for v, t in items if match(c, t)]
+        ids = [v for v, _ in items]
         if init:
             for v in ids:
                 seen[v] = "init"
@@ -99,8 +122,9 @@ def main():
             if not m:
                 log.append("%s %s: 정보 조회 실패(다음에 재시도)" % (c["name"], v))
                 continue
-            text = m["title"] + " " + m["description"]
-            if c.get("filter") and c["filter"] not in text:
+            if m["live"] in ("is_live", "is_upcoming", "post_live"):
+                continue  # 방송 중·예정·처리 중인 라이브는 끝난 뒤 다음 실행에서 정리
+            if not match(c, m["title"] + " " + m["description"]):
                 seen[v] = "skip"
                 continue
             if m["date"] and m["date"] < since:

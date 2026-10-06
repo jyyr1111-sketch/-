@@ -1,5 +1,6 @@
 [
  {"handle": "leejongbok", "name": "이종복TV", "scan": 8},
  {"handle": "LJByoutube2", "name": "이종복TV 실전기법", "scan": 8},
- {"handle": "TomatoTV_Official", "name": "토마토TV", "filter": "이종복", "scan": 20}
+ {"handle": "TomatoTV_Official", "name": "토마토TV", "filter": "이종복", "scan": 20},
+ {"handle": "mbn4604", "name": "MBN골드", "tab": "streams", "filter": ["성하준", "백인엽", "최원범"], "title_only": true, "scan": 30}
 ]
