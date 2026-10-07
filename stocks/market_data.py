@@ -2,7 +2,7 @@
 """시장 분석용 원자료를 네이버 금융에서 모은다.
 
 사용법:
-  python3 stocks/market_data.py <portfolio.json> <out.json>
+  python3 stocks/market_data.py <portfolio.json> <out.json> [--state <state.json>]
 
 지수·수급·환율·업종 등락·업종별 주도주·상승률 상위를 모으고, 업종 등락은
 stocks/history/<거래일>.json 에 쌓아 5거래일 누적 등락(모멘텀)을 계산한다.
@@ -55,7 +55,7 @@ def index(code):
                      "외국인": num(t.get("foreignValue")), "기관": num(t.get("institutionalValue"))}}
 
 
-def main(pf_path, out):
+def main(pf_path, out, state=None):
     data = {"indices": [index("KOSPI"), index("KOSDAQ")]}
     try:
         fx = get("/front-api/marketIndex/productDetail?category=exchange&reutersCode=FX_USDKRW")["result"]
@@ -65,11 +65,20 @@ def main(pf_path, out):
 
     groups = get("/api/stocks/industry?page=1&pageSize=100")["groups"]
     bizdate = data["indices"][0]["date"]
-    os.makedirs(HIST, exist_ok=True)
-    json.dump({g["name"]: num(g["changeRate"]) for g in groups},
-              open(os.path.join(HIST, bizdate + ".json"), "w", encoding="utf-8"), ensure_ascii=False, indent=0)
-    past = sorted(glob.glob(os.path.join(HIST, "*.json")))[-5:]
-    hist = [json.load(open(p, encoding="utf-8")) for p in past]
+    today = {g["name"]: num(g["changeRate"]) for g in groups}
+    if state:  # 아티팩트 DB state 문서의 "hist" 키(최근 10거래일)에 기록
+        st = json.load(open(state, encoding="utf-8")) if os.path.exists(state) else {}
+        h = st.get("hist", {})
+        h[bizdate] = today
+        h = {k: h[k] for k in sorted(h)[-10:]}
+        st["hist"] = h
+        json.dump(st, open(state, "w", encoding="utf-8"), ensure_ascii=False)
+        hist = [h[k] for k in sorted(h)[-5:]]
+    else:
+        os.makedirs(HIST, exist_ok=True)
+        json.dump(today, open(os.path.join(HIST, bizdate + ".json"), "w", encoding="utf-8"), ensure_ascii=False, indent=0)
+        past = sorted(glob.glob(os.path.join(HIST, "*.json")))[-5:]
+        hist = [json.load(open(p, encoding="utf-8")) for p in past]
     sectors = []
     for g in groups:
         rets = [h[g["name"]] for h in hist if h.get(g["name"]) is not None]
@@ -105,4 +114,5 @@ def main(pf_path, out):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    a = sys.argv[1:]
+    main(a[0], a[1], a[a.index("--state") + 1] if "--state" in a else None)

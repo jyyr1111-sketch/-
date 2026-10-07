@@ -9,6 +9,8 @@
 - --since 보다 오래된 영상은 정리하지 않고 본 것으로만 기록한다(오랜만에 돌려도 몰아서 정리하지 않게).
 - --init 은 지금 목록을 전부 본 것으로 기록만 하고 끝낸다.
 - --only / --skip 은 채널 key(없으면 handle)로 대상을 고른다.
+- --state <file> 이면 본 영상 기록을 그 JSON 의 "seen" 키에 읽고 쓴다(저장소에 푸시할 수 없는
+  새 세션 루틴용: 아티팩트 DB 의 state 문서를 받아 넘기고, 끝나면 다시 저장한다).
 - 결과: <out_dir>/new_videos.json  [{id,url,title,channel,date,duration,description,transcript}]
   자막을 못 받은 영상은 transcript 가 빈 문자열이다. 메타데이터 조회 자체가 실패한 영상은
   seen 에 넣지 않아 다음 실행 때 다시 시도한다.
@@ -104,7 +106,12 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     chans = [c for c in json.load(open(CHANNELS, encoding="utf-8"))
              if (only is None or c.get("key", c["handle"]) in only) and c.get("key", c["handle"]) not in skip]
-    seen = json.load(open(SEEN, encoding="utf-8")) if os.path.exists(SEEN) else {}
+    state = a[a.index("--state") + 1] if "--state" in a else None
+    if state:
+        st = json.load(open(state, encoding="utf-8")) if os.path.exists(state) else {}
+        seen = st.get("seen", {})
+    else:
+        seen = json.load(open(SEEN, encoding="utf-8")) if os.path.exists(SEEN) else {}
     today = datetime.now(KST).strftime("%Y%m%d")
     found, log = [], []
     for c in chans:
@@ -140,7 +147,11 @@ def main():
             seen[v] = today
             found.append(m)
             log.append("%s: %s (%s자)" % (c["name"], m["title"], len(m["transcript"])))
-    json.dump(seen, open(SEEN, "w", encoding="utf-8"), ensure_ascii=False, indent=0)
+    if state:
+        st["seen"] = seen
+        json.dump(st, open(state, "w", encoding="utf-8"), ensure_ascii=False)
+    else:
+        json.dump(seen, open(SEEN, "w", encoding="utf-8"), ensure_ascii=False, indent=0)
     json.dump(found, open(os.path.join(out_dir, "new_videos.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("\n".join(log) or "새 영상 없음")
     print("new: %d" % len(found))
