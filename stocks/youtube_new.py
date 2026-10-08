@@ -113,6 +113,7 @@ def main():
     else:
         seen = json.load(open(SEEN, encoding="utf-8")) if os.path.exists(SEEN) else {}
     today = datetime.now(KST).strftime("%Y%m%d")
+    retry_until = (datetime.now(KST) - timedelta(days=2)).strftime("%Y%m%d")
     found, log = [], []
     for c in chans:
         items = [(v, t) for v, t in latest(c["handle"], c.get("scan", 12), c.get("tab", "videos")) if v not in seen]
@@ -144,6 +145,11 @@ def main():
                 continue
             m["channel"] = c["name"]
             m["transcript"] = transcript(v, out_dir)
+            # 긴 라이브는 끝난 뒤 자동 자막이 생기기까지 몇 시간 걸린다. 최근 영상인데 자막이 아직 없으면
+            # 본 것으로 기록하지 않고 다음 실행에서 다시 시도한다(이틀이 지나도 없으면 제목만 남긴다).
+            if not m["transcript"] and m["date"] and m["date"] >= retry_until:
+                log.append("%s: %s (자막 아직 없음, 다음 실행에서 재시도)" % (c["name"], m["title"]))
+                continue
             seen[v] = today
             found.append(m)
             log.append("%s: %s (%s자)" % (c["name"], m["title"], len(m["transcript"])))
