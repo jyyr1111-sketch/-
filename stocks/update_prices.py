@@ -62,6 +62,15 @@ def quote(it):
             "date": str(it.get("localTradedAt") or "")[:10]}
 
 
+def market_of(code):
+    # 관심 종목에 직접 추가한 종목은 시장이 비어 있어 종목 정보에서 코스피/코스닥을 채운다
+    try:
+        t = get_json("https://m.stock.naver.com/api/stock/%s/basic" % code).get("stockExchangeType") or {}
+    except Exception:
+        return None
+    return {"KS": "코스피", "KQ": "코스닥"}.get(t.get("code")) or t.get("nameKor")
+
+
 def fetch_prices(codes):
     # 실시간 시세(polling)는 장 마감 뒤 시간외(NXT) 거래로 계속 바뀌므로, 일별 시세의 정규장 종가를 쓴다
     out = {}
@@ -119,6 +128,8 @@ def main(src, dst, tsrc=None, tdst=None):
             p = prices.get(codes.get(g["name"], ""))
             if p:
                 g.update(code=codes[g["name"]], cur=p["cur"], chg=p["chg"])
+            if not g.get("mkt") and codes.get(g["name"]):
+                g["mkt"] = market_of(codes[g["name"]]) or ""
         for h in holdings:
             p = prices.get(codes.get(h["name"], ""))
             if p:
