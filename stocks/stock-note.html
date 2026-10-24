@@ -489,6 +489,7 @@ table.pl input.plin.q{width:72px}
     <p class="note">시장 분석은 평일 장 마감 후(오후 3시 52분) Claude가 네이버 금융 데이터(지수·투자자별 매매·업종 등락·거래대금)로 작성합니다. 추천 종목은 그날 데이터에서 고른 관찰 후보이며 투자 권유가 아닙니다. 매수 전 차트·실적·공시를 직접 확인하세요.</p>
   </div>
   <div id="p-u" role="tabpanel" hidden>
+    <section id="nf-box" hidden style="margin-bottom:22px"><h2>야간선물</h2><div class="us-idx" id="nf-idx" style="margin:0"></div><p class="mk-date" id="nf-note" style="margin-top:6px"></p></section>
     <div id="us-body" class="muted">미국장 정리를 불러오는 중…</div>
     <p class="note">매일 아침 7시 37분 Claude가 밤사이 미국 증시 마감 기사와 지표를 찾아 정리해요. 토요일 아침엔 금요일 장을, 일·월요일 아침엔 지난주 흐름과 이번 주 일정을 정리합니다. 수치는 출처 기사 기준이며 투자 권유가 아닙니다.</p>
   </div>
@@ -1350,6 +1351,18 @@ function renderMK(){
     if(db&&uid){const snap=await db.doc("data/users/"+uid+"/market").get();if(snap.exists)MK=JSON.parse(JSON.stringify(snap.data()));}
   }catch(e){}
   renderMK();
+})();
+
+// ---------- 야간선물 (Claude가 매일 아침 data/users/<id>/nightfut 에 작성) ----------
+(async function initNF(){
+  let d=null;
+  try{const c=window.claude;const [db,user]=c?await Promise.all([c.use("db"),c.use("user")]):[null,null];const uid=user?await user.id():null;
+    if(db&&uid){const s=await db.doc("data/users/"+uid+"/nightfut").get();if(s.exists)d=s.data();}}catch(e){}
+  const items=d&&Array.isArray(d.items)?d.items:[]; if(!items.length) return;
+  const n=(v,dg=2)=>v==null?"-":Number(v).toLocaleString("en-US",{minimumFractionDigits:dg,maximumFractionDigits:dg});
+  $("nf-idx").innerHTML=items.map(x=>`<div><small>${esc(x.name)}</small><b class="num">${n(x.close)}</b><span class="num ${cls(x.chg)}">${x.chg!=null?sgn(x.chg):""}</span><small style="margin-top:2px">${esc(x.time||"")} 기준</small></div>`).join("");
+  $("nf-note").textContent="전 거래일 종가 대비 · 매일 아침 자동 갱신"+(items.some(x=>x.key==="kospi")?"":" · 코스피200 야간선물은 자료원 연결 후 추가");
+  $("nf-box").hidden=false;
 })();
 
 // ---------- 미국장 (Claude가 매일 아침 data/users/<id>/usmarket 에 작성) ----------
