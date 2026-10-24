@@ -3,7 +3,8 @@
 
 사용법: python3 stocks/night_futures.py <out.json>
 - 나스닥100 선물(NQ=F, CME 근월물): Yahoo Finance 일봉. 마지막 봉이 진행 중인 거래일, 바로 앞 봉 종가와 비교한 등락률.
-- 코스피200 야간선물: 접근 가능한 자료원이 아직 없어 비워 둔다(kospi: null).
+- MSCI 한국 ETF(EWY, 미국 상장): 밤사이 한국 증시를 보는 참고 지표(코스피200 야간선물 대신).
+  한국거래소 데이터 포털은 로그인한 회원에게만 시세를 줘서 코스피200 야간선물은 받지 못한다.
 - 결과: {"updated","items":[{key,name,close,prev,chg,time}]}  time 은 마지막 체결 시각(KST "MM/DD HH:MM").
 """
 import json
@@ -32,6 +33,13 @@ def main(dst):
         items.append(yahoo("NQ=F", "나스닥100 선물", "nq"))
     except Exception as e:
         print("나스닥100 선물 실패:", e)
+    try:
+        x = yahoo("EWY", "MSCI 한국 ETF (EWY)", "ewy")
+        x["ref"] = True  # 참고 지표 표시
+        x["unit"] = "$"
+        items.append(x)
+    except Exception as e:
+        print("EWY 실패:", e)
     if not items:
         return 1
     out = {"updated": datetime.now(KST).isoformat(timespec="seconds"), "items": items}

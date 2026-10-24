@@ -1360,8 +1360,8 @@ function renderMK(){
     if(db&&uid){const s=await db.doc("data/users/"+uid+"/nightfut").get();if(s.exists)d=s.data();}}catch(e){}
   const items=d&&Array.isArray(d.items)?d.items:[]; if(!items.length) return;
   const n=(v,dg=2)=>v==null?"-":Number(v).toLocaleString("en-US",{minimumFractionDigits:dg,maximumFractionDigits:dg});
-  $("nf-idx").innerHTML=items.map(x=>`<div><small>${esc(x.name)}</small><b class="num">${n(x.close)}</b><span class="num ${cls(x.chg)}">${x.chg!=null?sgn(x.chg):""}</span><small style="margin-top:2px">${esc(x.time||"")} 기준</small></div>`).join("");
-  $("nf-note").textContent="전 거래일 종가 대비 · 매일 아침 자동 갱신"+(items.some(x=>x.key==="kospi")?"":" · 코스피200 야간선물은 자료원 연결 후 추가");
+  $("nf-idx").innerHTML=items.map(x=>`<div><small>${esc(x.name)}${x.ref?' <span class="chip" style="margin-left:4px">참고</span>':""}</small><b class="num">${x.unit?esc(x.unit):""}${n(x.close)}</b><span class="num ${cls(x.chg)}">${x.chg!=null?sgn(x.chg):""}</span><small style="margin-top:2px">${esc(x.time||"")} 기준</small></div>`).join("");
+  $("nf-note").textContent="전 거래일 종가 대비 · 매일 아침 자동 갱신"+(items.some(x=>x.key==="ewy")?" · EWY는 미국에 상장된 한국 주식 ETF로, 코스피200 야간선물 대신 밤사이 한국 증시 분위기를 보는 참고 지표예요":"");
   $("nf-box").hidden=false;
 })();
 
