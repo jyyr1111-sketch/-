@@ -489,7 +489,6 @@ table.pl input.plin.q{width:72px}
     <p class="note">시장 분석은 평일 장 마감 후(오후 3시 52분) Claude가 네이버 금융 데이터(지수·투자자별 매매·업종 등락·거래대금)로 작성합니다. 추천 종목은 그날 데이터에서 고른 관찰 후보이며 투자 권유가 아닙니다. 매수 전 차트·실적·공시를 직접 확인하세요.</p>
   </div>
   <div id="p-u" role="tabpanel" hidden>
-    <section id="nf-box" hidden style="margin-bottom:22px"><h2>야간선물</h2><div class="us-idx" id="nf-idx" style="margin:0"></div><p class="mk-date" id="nf-note" style="margin-top:6px"></p></section>
     <div id="us-body" class="muted">미국장 정리를 불러오는 중…</div>
     <p class="note">매일 아침 7시 37분 Claude가 밤사이 미국 증시 마감 기사와 지표를 찾아 정리해요. 토요일 아침엔 금요일 장을, 일·월요일 아침엔 지난주 흐름과 이번 주 일정을 정리합니다. 수치는 출처 기사 기준이며 투자 권유가 아닙니다.</p>
   </div>
@@ -1359,11 +1358,14 @@ function renderMK(){
   try{const c=window.claude;const [db,user]=c?await Promise.all([c.use("db"),c.use("user")]):[null,null];const uid=user?await user.id():null;
     if(db&&uid){const s=await db.doc("data/users/"+uid+"/nightfut").get();if(s.exists)d=s.data();}}catch(e){}
   const items=d&&Array.isArray(d.items)?d.items:[]; if(!items.length) return;
-  const n=(v,dg=2)=>v==null?"-":Number(v).toLocaleString("en-US",{minimumFractionDigits:dg,maximumFractionDigits:dg});
-  $("nf-idx").innerHTML=items.map(x=>`<div><small>${esc(x.name)}${x.ref?' <span class="chip" style="margin-left:4px">참고</span>':""}</small><b class="num">${x.unit?esc(x.unit):""}${n(x.close)}</b><span class="num ${cls(x.chg)}">${x.chg!=null?sgn(x.chg):""}</span><small style="margin-top:2px">${esc(x.time||"")} 기준</small></div>`).join("");
-  $("nf-note").textContent="전 거래일 종가 대비 · 매일 아침 자동 갱신"+(items.some(x=>x.key==="ewy")?" · EWY는 미국에 상장된 한국 주식 ETF로, 코스피200 야간선물 대신 밤사이 한국 증시 분위기를 보는 참고 지표예요":"");
-  $("nf-box").hidden=false;
+  NF=items; if(US) renderUS();
 })();
+// 야간선물 카드: 미국장 지수 칸의 VIX 바로 뒤에 붙인다
+let NF=[];
+function nfCards(){
+  const n=(v,dg=2)=>v==null?"-":Number(v).toLocaleString("en-US",{minimumFractionDigits:dg,maximumFractionDigits:dg});
+  return NF.map(x=>`<div><small>${esc(x.name)}${x.ref?' <span class="chip" style="margin-left:4px">참고</span>':""}</small><b class="num">${x.unit?esc(x.unit):""}${n(x.close)}</b><span class="num ${cls(x.chg)}">${x.chg!=null?sgn(x.chg):""}</span><small style="margin-top:2px">${esc(x.time||"")} 기준</small></div>`).join("");
+}
 
 // ---------- 미국장 (Claude가 매일 아침 data/users/<id>/usmarket 에 작성) ----------
 let US=null;
@@ -1374,7 +1376,7 @@ function renderUS(){
   box.className="";
   const dt=u.date?new Date(u.date+"T00:00:00"):null, w=dt?"일월화수목금토"[dt.getDay()]:"";
   const tagH=n=>{if(typeof heldOf!=="function")return "";const h=heldOf(n);if(h)return ` <span class="tag held">보유 ${h.qty}주</span>`;const g=typeof tgFind==="function"?tgFind(n):null;return g?' <span class="chip">관심</span>':"";};
-  const idx=(u.indices||[]).map(i=>`<div><small>${esc(i.name)}</small><b class="num">${usNum(i.close)}</b><span class="num ${cls(i.chg)}">${i.chg!=null?sgn(i.chg):""}</span></div>`).join("");
+  const idx=(u.indices||[]).map(i=>`<div><small>${esc(i.name)}</small><b class="num">${usNum(i.close)}</b><span class="num ${cls(i.chg)}">${i.chg!=null?sgn(i.chg):""}</span></div>`).join("")+nfCards();
   const macro=(u.macro||[]).map(m=>`<li><div class="sec-row"><b>${esc(m.name)}</b><span class="num">${esc(m.value)}</span><span class="num ${m.chg!=null&&typeof m.chg==="number"?cls(m.chg):""}">${m.chg==null?"":typeof m.chg==="number"?sgn(m.chg):esc(m.chg)}</span></div>${m.note?`<small class="muted" style="font-size:.84rem">${esc(m.note)}</small>`:""}</li>`).join("");
   const issues=(u.issues||[]).map(x=>`<div class="card us-issue"><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p></div>`).join("");
   const mv=(u.movers||[]).map(m=>`<li><b>${esc(m.name)}${m.ticker?` <small style="display:inline;color:var(--sub)">${esc(m.ticker)}</small>`:""}</b><span class="num ${cls(m.chg)}">${m.chg!=null?sgn(m.chg):""}</span>${m.note?`<small>${esc(m.note)}</small>`:""}</li>`).join("");
@@ -1383,7 +1385,7 @@ function renderUS(){
   box.innerHTML=`<p class="mk-date">${u.mode==="weekend"?"주간 정리 · ":""}${esc(u.date||"")}${w?"("+w+")":""} 미국장 마감 기준${u.written?" · 작성 "+esc(u.written):""}${u.mode==="weekend"?'<span class="us-badge">주말판</span>':""}</p>
     <p class="headline">${esc(u.headline||"")}</p>
     ${(Array.isArray(u.summary)?u.summary:String(u.summary||"").split(/\n\s*\n|\n/)).filter(t=>t.trim()).map(t=>`<p>${esc(t)}</p>`).join("")}
-    ${idx?`<div class="us-idx">${idx}</div>`:""}
+    ${idx?`<div class="us-idx">${idx}</div>${NF.length?`<p class="mk-date" style="margin:-18px 0 22px">야간선물·EWY는 매일 아침 자동 갱신(전 거래일 종가 대비)${NF.some(x=>x.key==="ewy")?" · EWY는 미국에 상장된 한국 주식 ETF로, 코스피200 야간선물 대신 밤사이 한국 증시 분위기를 보는 참고 지표예요":""}</p>`:""}`:""}
     ${issues?`<section><h2>주요 이슈</h2>${issues}</section>`:""}
     <section class="cols"><div>${mv?`<h2>특징주</h2><ul class="plain us-mv">${mv}</ul>`:""}</div><div>${macro?`<h2>금리 · 달러 · 원자재</h2><ul class="plain">${macro}</ul>`:""}</div></section>
     ${kr?`<section><h2>오늘 국내 증시에 미칠 영향</h2><ul class="plain">${kr}</ul></section>`:""}
