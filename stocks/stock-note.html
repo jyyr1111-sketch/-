@@ -490,7 +490,7 @@ table.pl input.plin.q{width:72px}
   </div>
   <div id="p-u" role="tabpanel" hidden>
     <div id="us-body" class="muted">미국장 정리를 불러오는 중…</div>
-    <p class="note">매일 아침 7시 37분 Claude가 밤사이 미국 증시 마감 기사와 지표를 찾아 정리해요. 토요일 아침엔 금요일 장을, 일·월요일 아침엔 지난주 흐름과 이번 주 일정을 정리합니다. 수치는 출처 기사 기준이며 투자 권유가 아닙니다.</p>
+    <p class="note">매일 아침 7시쯤 Claude가 밤사이 미국 증시 마감 기사와 지표, 나스닥100 선물·EWY를 정리해요. 토요일 아침엔 금요일 장을, 일·월요일 아침엔 지난주 흐름과 이번 주 일정을 정리합니다. 수치는 출처 기사 기준이며 투자 권유가 아닙니다.</p>
   </div>
   <div id="p-p" role="tabpanel">
     <div id="pf-loading" class="muted">포트폴리오를 불러오는 중…</div>
@@ -1372,7 +1372,7 @@ let US=null;
 const usNum=(v,d=2)=>v==null?"-":Number(v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
 function renderUS(){
   const box=$("us-body"), arr=v=>Array.isArray(v)?v:[], u=US&&{...US,indices:arr(US.indices),macro:arr(US.macro),issues:arr(US.issues),movers:arr(US.movers),korea:arr(US.korea).map(k=>({...k,stocks:arr(k.stocks)})),events:arr(US.events),sources:arr(US.sources)};
-  if(!u){box.className="muted";box.textContent="아직 정리된 미국장 내용이 없어요. 내일 아침 7시 37분부터 자동으로 채워져요.";return;}
+  if(!u){box.className="muted";box.textContent="아직 정리된 미국장 내용이 없어요. 매일 아침 7시쯤 자동으로 채워져요.";return;}
   box.className="";
   const dt=u.date?new Date(u.date+"T00:00:00"):null, w=dt?"일월화수목금토"[dt.getDay()]:"";
   const tagH=n=>{if(typeof heldOf!=="function")return "";const h=heldOf(n);if(h)return ` <span class="tag held">보유 ${h.qty}주</span>`;const g=typeof tgFind==="function"?tgFind(n):null;return g?' <span class="chip">관심</span>':"";};
