@@ -383,6 +383,20 @@ table.pl input.plin.q{width:72px}
 .flc .r span b{color:var(--up);font-weight:700}
 .flc .h{margin-top:6px;padding-top:6px;border-top:1px dashed var(--rule);font-size:.8rem;color:var(--sub)}
 .vid .warn{margin-top:10px;font-size:.8rem;color:var(--sub);background:var(--panel2);border-radius:8px;padding:8px 10px}
+.us-idx{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0 26px}
+.us-idx div{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:11px 14px}
+.us-idx small{display:block;color:var(--sub);font-size:.78rem}
+.us-idx b{display:block;font-size:1.2rem;letter-spacing:-.01em}
+.us-idx span{font-size:.86rem;font-weight:500}
+.us-badge{display:inline-block;font-size:.74rem;padding:1px 8px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-weight:500;margin-left:6px;vertical-align:2px}
+.us-issue{margin-bottom:10px}
+.us-issue h3{font-size:1rem;margin:0 0 4px}
+.us-issue p{font-size:.92rem;margin:0}
+.us-mv li{display:grid;grid-template-columns:1fr auto;gap:2px 10px}
+.us-mv li small{grid-column:1/-1;color:var(--sub);font-size:.84rem}
+.us-src{font-size:.82rem;color:var(--sub);margin-top:8px}
+.us-src a{color:var(--accent)}
+#us-body ul.plain{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:4px 14px}
 </style>
 </head>
 <body>
@@ -401,6 +415,7 @@ table.pl input.plin.q{width:72px}
     <button role="tab" id="t-c" aria-selected="false" aria-controls="p-c">추가매수 계산</button>
     <button role="tab" id="t-g" aria-selected="false" aria-controls="p-g">관심 종목 · 복기</button>
     <button role="tab" id="t-m" aria-selected="false" aria-controls="p-m">시장 분석</button>
+    <button role="tab" id="t-u" aria-selected="false" aria-controls="p-u">미국장</button>
     <button role="tab" id="t-v" aria-selected="false" aria-controls="p-v">영상 정리</button>
     <button role="tab" id="t-a" aria-selected="false" aria-controls="p-a">자산 정리</button>
   </div>
@@ -409,12 +424,12 @@ table.pl input.plin.q{width:72px}
     <section><h2>외국인 · 기관 동시 순매수</h2><div class="fl-grid" id="fl-list"></div></section>
     <section><h2 id="fl-fh">외국인 연속 순매수</h2><div class="fl-grid" id="fl-frgn"></div></section>
     <section><h2 id="fl-oh">기관 연속 순매수</h2><div class="fl-grid" id="fl-organ"></div></section>
-    <p class="note">내 포트폴리오 보유 종목만 봅니다. 평일 아침(8시 48분) Claude가 네이버 금융의 종목별 투자자 동향 확정치로 전 거래일 기준을 정리해요. 금액은 순매수 수량 × 그날 종가로 어림한 값이고, 연속 순매수 누적 금액은 연속 기간 동안의 합입니다. 투자 권유가 아닙니다.</p>
+    <p class="note">내 포트폴리오 보유 종목만 봅니다. 매일 아침(8시 48분) Claude가 네이버 금융의 종목별 투자자 동향 확정치로 전 거래일 기준을 정리해요. 금액은 순매수 수량 × 그날 종가로 어림한 값이고, 연속 순매수 누적 금액은 연속 기간 동안의 합입니다. 투자 권유가 아닙니다.</p>
   </div>
   <div id="p-n" role="tabpanel" hidden>
     <div class="toolbar"><label>보기 <select id="nw-f"><option value="">전체</option><option value="h">보유 종목만</option><option value="w">관심 종목만</option><option value="r">리포트만</option></select></label><span class="status" id="nw-date"></span></div>
     <div id="nw-list" class="muted">불러오는 중…</div>
-    <p class="note">보유 종목과 관심 종목을 봅니다. 평일 장 마감 후(오후 3시 52분) Claude가 네이버 금융에서 최근 3일 뉴스(종목당 최대 4건)와 최근 30일 증권사 리포트(종목당 최대 3건) 링크를 모아요. 제목을 누르면 원문이 열립니다. 투자 권유가 아닙니다.</p>
+    <p class="note">보유 종목과 관심 종목을 봅니다. 매일 오후 3시 52분 Claude가 네이버 금융에서 최근 3일 뉴스(종목당 최대 4건)와 최근 30일 증권사 리포트(종목당 최대 3건) 링크를 모아요. 제목을 누르면 원문이 열립니다. 투자 권유가 아닙니다.</p>
   </div>
   <div id="p-c" role="tabpanel" hidden>
     <section id="pl-box">
@@ -460,7 +475,7 @@ table.pl input.plin.q{width:72px}
         <input class="nm" id="g-memo" placeholder="메모(선택)">
         <button id="g-go" type="button">추가</button>
       </div>
-      <p class="note">종목 이름을 누르면 목표가·섹터·메모를 고칠 수 있어요. 현재가는 평일 장 마감 후(오후 4시쯤) Claude가 네이버 금융 종가로 매일 갱신합니다. 새로 추가한 종목은 다음 갱신 때 현재가가 채워져요. 상승여력은 목표가 ÷ 현재가 − 1, 막대는 현재가가 목표가의 몇 %까지 왔는지입니다. 보유 종목은 '내 포트폴리오'에서 이 목표가(★)를 그대로 쓰고(어느 쪽에서 고쳐도 함께 바뀜), 현재가도 이 값으로 함께 갱신돼요. 투자 권유가 아닙니다.</p>
+      <p class="note">종목 이름을 누르면 목표가·섹터·메모를 고칠 수 있어요. 현재가는 매일 오후 4시쯤(주말엔 금요일 종가 유지) Claude가 네이버 금융 종가로 매일 갱신합니다. 새로 추가한 종목은 다음 갱신 때 현재가가 채워져요. 상승여력은 목표가 ÷ 현재가 − 1, 막대는 현재가가 목표가의 몇 %까지 왔는지입니다. 보유 종목은 '내 포트폴리오'에서 이 목표가(★)를 그대로 쓰고(어느 쪽에서 고쳐도 함께 바뀜), 현재가도 이 값으로 함께 갱신돼요. 투자 권유가 아닙니다.</p>
     </div>
     <section style="margin-top:34px">
       <h2>주식 복기</h2>
@@ -472,6 +487,10 @@ table.pl input.plin.q{width:72px}
   <div id="p-m" role="tabpanel" hidden>
     <div id="mk-body" class="muted">시장 분석을 불러오는 중…</div>
     <p class="note">시장 분석은 평일 장 마감 후(오후 3시 52분) Claude가 네이버 금융 데이터(지수·투자자별 매매·업종 등락·거래대금)로 작성합니다. 추천 종목은 그날 데이터에서 고른 관찰 후보이며 투자 권유가 아닙니다. 매수 전 차트·실적·공시를 직접 확인하세요.</p>
+  </div>
+  <div id="p-u" role="tabpanel" hidden>
+    <div id="us-body" class="muted">미국장 정리를 불러오는 중…</div>
+    <p class="note">매일 아침 7시 37분 Claude가 밤사이 미국 증시 마감 기사와 지표를 찾아 정리해요. 토요일 아침엔 금요일 장을, 일·월요일 아침엔 지난주 흐름과 이번 주 일정을 정리합니다. 수치는 출처 기사 기준이며 투자 권유가 아닙니다.</p>
   </div>
   <div id="p-p" role="tabpanel">
     <div id="pf-loading" class="muted">포트폴리오를 불러오는 중…</div>
@@ -554,8 +573,8 @@ const $ = id => document.getElementById(id);
 {const d=new Date(),w="일월화수목금토"[d.getDay()];$("today").textContent=`MY STOCK NOTE · ${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")} (${w})`;}
 
 // ---------- tabs ----------
-const tabs=[["t-p","p-p"],["t-s","p-s"],["t-n","p-n"],["t-c","p-c"],["t-g","p-g"],["t-m","p-m"],["t-v","p-v"],["t-a","p-a"]];
-tabs.forEach(([t,p])=>$(t).addEventListener("click",()=>{tabs.forEach(([t2,p2])=>{$(t2).setAttribute("aria-selected",t2===t);$(p2).hidden=t2!==t;});if(t==="t-a"&&AS)renderAS();if(t==="t-c"&&PF){renderPlans();renderCalc();}if(t==="t-v")renderV();if(t==="t-m"&&MK)renderMK();}));
+const tabs=[["t-p","p-p"],["t-s","p-s"],["t-n","p-n"],["t-c","p-c"],["t-g","p-g"],["t-m","p-m"],["t-u","p-u"],["t-v","p-v"],["t-a","p-a"]];
+tabs.forEach(([t,p])=>$(t).addEventListener("click",()=>{tabs.forEach(([t2,p2])=>{$(t2).setAttribute("aria-selected",t2===t);$(p2).hidden=t2!==t;});if(t==="t-a"&&AS)renderAS();if(t==="t-c"&&PF){renderPlans();renderCalc();}if(t==="t-v")renderV();if(t==="t-m"&&MK)renderMK();if(t==="t-u")renderUS();}));
 
 // ---------- portfolio ----------
 const SECTORS=["반도체","2차전지","조선·해양","전력·원전","로봇","바이오·의료기기","광통신","통신·IT","우주","건설","엔터","금융","화학·소재","부품","수소·에너지","ETF","기타"];
@@ -1330,6 +1349,37 @@ function renderMK(){
     if(db&&uid){const snap=await db.doc("data/users/"+uid+"/market").get();if(snap.exists)MK=JSON.parse(JSON.stringify(snap.data()));}
   }catch(e){}
   renderMK();
+})();
+
+// ---------- 미국장 (Claude가 매일 아침 data/users/<id>/usmarket 에 작성) ----------
+let US=null;
+const usNum=(v,d=2)=>v==null?"-":Number(v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
+function renderUS(){
+  const box=$("us-body"), arr=v=>Array.isArray(v)?v:[], u=US&&{...US,indices:arr(US.indices),macro:arr(US.macro),issues:arr(US.issues),movers:arr(US.movers),korea:arr(US.korea).map(k=>({...k,stocks:arr(k.stocks)})),events:arr(US.events),sources:arr(US.sources)};
+  if(!u){box.className="muted";box.textContent="아직 정리된 미국장 내용이 없어요. 내일 아침 7시 37분부터 자동으로 채워져요.";return;}
+  box.className="";
+  const dt=u.date?new Date(u.date+"T00:00:00"):null, w=dt?"일월화수목금토"[dt.getDay()]:"";
+  const tagH=n=>{if(typeof heldOf!=="function")return "";const h=heldOf(n);if(h)return ` <span class="tag held">보유 ${h.qty}주</span>`;const g=typeof tgFind==="function"?tgFind(n):null;return g?' <span class="chip">관심</span>':"";};
+  const idx=(u.indices||[]).map(i=>`<div><small>${esc(i.name)}</small><b class="num">${usNum(i.close)}</b><span class="num ${cls(i.chg)}">${i.chg!=null?sgn(i.chg):""}</span></div>`).join("");
+  const macro=(u.macro||[]).map(m=>`<li><div class="sec-row"><b>${esc(m.name)}</b><span class="num">${esc(m.value)}</span><span class="num ${m.chg!=null&&typeof m.chg==="number"?cls(m.chg):""}">${m.chg==null?"":typeof m.chg==="number"?sgn(m.chg):esc(m.chg)}</span></div>${m.note?`<small class="muted" style="font-size:.84rem">${esc(m.note)}</small>`:""}</li>`).join("");
+  const issues=(u.issues||[]).map(x=>`<div class="card us-issue"><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p></div>`).join("");
+  const mv=(u.movers||[]).map(m=>`<li><b>${esc(m.name)}${m.ticker?` <small style="display:inline;color:var(--sub)">${esc(m.ticker)}</small>`:""}</b><span class="num ${cls(m.chg)}">${m.chg!=null?sgn(m.chg):""}</span>${m.note?`<small>${esc(m.note)}</small>`:""}</li>`).join("");
+  const kr=(u.korea||[]).map(k=>`<li><b>${esc(k.sector)}</b>${(k.stocks||[]).length?`<div style="font-size:.86rem;margin-top:2px">${k.stocks.map(n=>esc(n)+tagH(n)).join(" · ")}</div>`:""}<small class="muted" style="display:block;font-size:.86rem;margin-top:2px">${esc(k.view||"")}</small></li>`).join("");
+  const ev=(u.events||[]).map(e=>`<li><div class="sec-row"><b>${esc(e.date)}</b><span>${esc(e.text)}</span><span></span></div></li>`).join("");
+  box.innerHTML=`<p class="mk-date">${u.mode==="weekend"?"주간 정리 · ":""}${esc(u.date||"")}${w?"("+w+")":""} 미국장 마감 기준${u.written?" · 작성 "+esc(u.written):""}${u.mode==="weekend"?'<span class="us-badge">주말판</span>':""}</p>
+    <p class="headline">${esc(u.headline||"")}</p>
+    ${(Array.isArray(u.summary)?u.summary:String(u.summary||"").split(/\n\s*\n|\n/)).filter(t=>t.trim()).map(t=>`<p>${esc(t)}</p>`).join("")}
+    ${idx?`<div class="us-idx">${idx}</div>`:""}
+    ${issues?`<section><h2>주요 이슈</h2>${issues}</section>`:""}
+    <section class="cols"><div>${mv?`<h2>특징주</h2><ul class="plain us-mv">${mv}</ul>`:""}</div><div>${macro?`<h2>금리 · 달러 · 원자재</h2><ul class="plain">${macro}</ul>`:""}</div></section>
+    ${kr?`<section><h2>오늘 국내 증시에 미칠 영향</h2><ul class="plain">${kr}</ul></section>`:""}
+    ${ev?`<section><h2>다가오는 일정</h2><ul class="plain">${ev}</ul></section>`:""}
+    ${(u.sources||[]).length?`<p class="us-src">출처: ${u.sources.map(x=>`<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.t)}</a>`).join(" · ")}</p>`:""}`;
+}
+(async function initUS(){
+  try{const c=window.claude;const [db,user]=c?await Promise.all([c.use("db"),c.use("user")]):[null,null];const uid=user?await user.id():null;
+    if(db&&uid){const snap=await db.doc("data/users/"+uid+"/usmarket").get();if(snap.exists)US=JSON.parse(JSON.stringify(snap.data()));}}catch(e){}
+  renderUS();
 })();
 </script>
 </body>
