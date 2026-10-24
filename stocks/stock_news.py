@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """보유 종목별 최근 뉴스와 증권사 리포트 링크를 모은다 ('뉴스 · 리포트' 탭 재료).
 
-사용법: python3 stocks/stock_news.py <portfolio.json> <out.json> [--days 3] [--rdays 30]
+사용법: python3 stocks/stock_news.py <portfolio.json> <out.json> [--targets <targets.json>] [--days 3] [--rdays 30]
+- --targets 를 주면 '관심 종목'(보유 종목과 겹치지 않는 것)도 함께 모으고 watch: true 로 표시한다.
 - 뉴스: 네이버 종목 뉴스에서 최근 --days 일 이내, 같은 기사 묶음은 첫 기사만, 종목당 최대 4개.
   제목·요약에 종목명이 없는 기사(시황 묶음 기사 등)는 뺀다.
 - 리포트: 네이버 리서치(종목분석)에서 최근 --rdays 일 이내, 종목당 최대 3개.
@@ -33,9 +34,15 @@ def main():
     rcut = (now - timedelta(days=rdays)).strftime("%Y%m%d")
     doc = json.load(open(src, encoding="utf-8"))
     codes = json.load(open(up.CODES, encoding="utf-8")) if os.path.exists(up.CODES) else {}
+    stocks = [dict(h, watch=False) for h in doc["holdings"]]
+    if "--targets" in a:
+        t = json.load(open(a[a.index("--targets") + 1], encoding="utf-8"))
+        held = {up.norm(h["name"]) for h in stocks}
+        stocks += [{"name": g["name"], "code": g.get("code"), "watch": True}
+                   for g in t.get("items", []) if up.norm(g["name"]) not in held]
     items, nn, nr = [], 0, 0
-    for h in doc["holdings"]:
-        c = codes.get(h["name"]) or up.lookup_code(h["name"])
+    for h in stocks:
+        c = h.get("code") or codes.get(h["name"]) or up.lookup_code(h["name"])
         if not c:
             continue
         news, reports, seen = [], [], set()
@@ -66,7 +73,7 @@ def main():
         except Exception:
             pass
         if news or reports:
-            items.append({"name": h["name"], "code": c, "news": news, "reports": reports})
+            items.append({"name": h["name"], "code": c, "watch": h["watch"], "news": news, "reports": reports})
             nn += len(news)
             nr += len(reports)
     last = lambda x: max([n["dt"] for n in x["news"]] + [r["dt"] for r in x["reports"]])
