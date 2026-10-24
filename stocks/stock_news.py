@@ -6,7 +6,9 @@
 - 뉴스: 네이버 종목 뉴스에서 최근 --days 일 이내, 같은 기사 묶음은 첫 기사만, 종목당 최대 4개.
   제목·요약에 종목명이 없는 기사(시황 묶음 기사 등)는 뺀다.
 - 리포트: 네이버 리서치(종목분석)에서 최근 --rdays 일 이내, 종목당 최대 3개.
-- 결과: {"date","updated","items":[{name,code,news:[{t,src,dt,url}],reports:[{t,broker,dt,url}]}]}
+- 결과: {"date","updated","items":[{name,code,news:[{t,src,dt,url}],reports:[{t,broker,dt,url,pdf}]}]}
+  리포트 url 은 모바일·PC 모두 열리는 m.stock.naver.com 리포트 화면(PC용 company_read 주소는 휴대폰에서
+  리포트 목록으로 튕긴다), pdf 는 원문 PDF.
   dt 는 "YYYY-MM-DD HH:MM"(리포트는 날짜만). 뉴스·리포트가 하나도 없는 종목은 뺀다.
 """
 import html
@@ -66,8 +68,13 @@ def main():
             for r in up.get_json("https://m.stock.naver.com/api/stock/%s/integration" % c).get("researches") or []:
                 if str(r.get("wdt", "")) < rcut:
                     continue
+                pdf = None
+                try:
+                    pdf = (up.get_json("https://m.stock.naver.com/api/research/company/%s" % r["id"]).get("researchContent") or {}).get("attachUrl")
+                except Exception:
+                    pass
                 reports.append({"t": html.unescape(r.get("tit", "")), "broker": r.get("bnm", ""), "dt": fmt(r["wdt"]),
-                                "url": "https://finance.naver.com/research/company_read.naver?nid=%s" % r["id"]})
+                                "url": "https://m.stock.naver.com/investment/research/company/%s" % r["id"], "pdf": pdf})
                 if len(reports) >= 3:
                     break
         except Exception:

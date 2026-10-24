@@ -1224,7 +1224,8 @@ function renderNW(){
   box.innerHTML=arr.length?arr.map(x=>{const h=typeof heldOf==="function"?heldOf(x.name):null, r=h&&h.cur?(h.cur/h.buy-1)*100:null;
     const g=!h&&typeof tgFind==="function"?tgFind(x.name):null;
     return `<div class="nw"><div class="hd"><b>${esc(x.name)}</b>${h?`<small class="num">보유 ${won(h.qty)}주${r!=null?` · <span class="${cls(r)}">${pct(r)}</span>`:""}</small>`:`<small class="num"><span class="chip" style="margin:0">관심</span>${g&&g.cur?` ${won(g.cur)}원${g.target?" · 목표 "+won(g.target)+"원":""}`:""}</small>`}</div><ul>
-      ${x.reports.map(p=>`<li class="rp"><span class="k">리포트</span><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.t)}</a><small>${esc(p.broker)} · ${md(p.dt)}</small></li>`).join("")}
+      ${x.reports.map(p=>{const u=String(p.url).replace(/^https:\/\/finance\.naver\.com\/research\/company_read\.naver\?nid=(\d+).*$/,"https://m.stock.naver.com/investment/research/company/$1");
+        return `<li class="rp"><span class="k">리포트</span><a href="${esc(u)}" target="_blank" rel="noopener">${esc(p.t)}</a><small>${esc(p.broker)} · ${md(p.dt)}${p.pdf?` · <a href="${esc(p.pdf)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500">PDF</a>`:""}</small></li>`;}).join("")}
       ${f==="r"?"":x.news.map(n=>`<li><a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.t)}</a><small>${esc(n.src)} · ${md(n.dt)}</small></li>`).join("")}</ul></div>`;}).join("")
     :'<p class="muted">해당하는 종목이 없어요.</p>';
 }
