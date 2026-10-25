@@ -384,7 +384,8 @@ table.pl input.plin.q{width:72px}
 .flc .h{margin-top:6px;padding-top:6px;border-top:1px dashed var(--rule);font-size:.8rem;color:var(--sub)}
 /* 탭: 옆으로 밀지 않고 여러 줄로 */
 .tabs{flex-wrap:wrap;overflow-x:visible;white-space:normal}
-@media (max-width:600px){.tabs{gap:4px;padding:4px}.tabs button{flex:1 1 30%;padding:7px 4px;font-size:.84rem;text-align:center}}
+/* 휴대폰: 짧은 이름으로 한 줄에 모두 */
+@media (max-width:600px){.tabs{flex-wrap:nowrap;gap:2px;padding:4px}.tabs button{flex:1 1 0;min-width:0;padding:8px 0;font-size:0;text-align:center}.tabs button::before{content:attr(data-s);font-size:.82rem;letter-spacing:-.02em}}
 .vid .warn{margin-top:10px;font-size:.8rem;color:var(--sub);background:var(--panel2);border-radius:8px;padding:8px 10px}
 .us-idx{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0 26px}
 .us-idx div{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:11px 14px}
@@ -412,15 +413,15 @@ table.pl input.plin.q{width:72px}
     <div class="seal" aria-hidden="true">株</div>
   </header>
   <div class="tabs" role="tablist">
-    <button role="tab" id="t-p" aria-selected="true" aria-controls="p-p">내 포트폴리오</button>
-    <button role="tab" id="t-s" aria-selected="false" aria-controls="p-s">수급 현황</button>
-    <button role="tab" id="t-n" aria-selected="false" aria-controls="p-n">뉴스 · 리포트</button>
-    <button role="tab" id="t-c" aria-selected="false" aria-controls="p-c">추가매수 계산</button>
-    <button role="tab" id="t-g" aria-selected="false" aria-controls="p-g">관심 종목 · 복기</button>
-    <button role="tab" id="t-m" aria-selected="false" aria-controls="p-m">시장 분석</button>
-    <button role="tab" id="t-u" aria-selected="false" aria-controls="p-u">미국장</button>
-    <button role="tab" id="t-v" aria-selected="false" aria-controls="p-v">영상 정리</button>
-    <button role="tab" id="t-a" aria-selected="false" aria-controls="p-a">자산 정리</button>
+    <button role="tab" id="t-p" data-s="보유" aria-selected="true" aria-controls="p-p">내 포트폴리오</button>
+    <button role="tab" id="t-s" data-s="수급" aria-selected="false" aria-controls="p-s">수급 현황</button>
+    <button role="tab" id="t-n" data-s="뉴스" aria-selected="false" aria-controls="p-n">뉴스 · 리포트</button>
+    <button role="tab" id="t-c" data-s="추매" aria-selected="false" aria-controls="p-c">추가매수 계산</button>
+    <button role="tab" id="t-g" data-s="관심" aria-selected="false" aria-controls="p-g">관심 종목 · 복기</button>
+    <button role="tab" id="t-m" data-s="시장" aria-selected="false" aria-controls="p-m">시장 분석</button>
+    <button role="tab" id="t-u" data-s="미국" aria-selected="false" aria-controls="p-u">미국장</button>
+    <button role="tab" id="t-v" data-s="영상" aria-selected="false" aria-controls="p-v">영상 정리</button>
+    <button role="tab" id="t-a" data-s="자산" aria-selected="false" aria-controls="p-a">자산 정리</button>
   </div>
   <div id="p-s" role="tabpanel" hidden>
     <p class="mk-date" id="fl-date">불러오는 중…</p>
