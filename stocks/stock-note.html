@@ -382,6 +382,9 @@ table.pl input.plin.q{width:72px}
 .flc .r{display:flex;justify-content:space-between;gap:8px;margin-top:3px;color:var(--sub)}
 .flc .r span b{color:var(--up);font-weight:700}
 .flc .h{margin-top:6px;padding-top:6px;border-top:1px dashed var(--rule);font-size:.8rem;color:var(--sub)}
+/* 탭: 옆으로 밀지 않고 여러 줄로 */
+.tabs{flex-wrap:wrap;overflow-x:visible;white-space:normal}
+@media (max-width:600px){.tabs{gap:4px;padding:4px}.tabs button{flex:1 1 30%;padding:7px 4px;font-size:.84rem;text-align:center}}
 .vid .warn{margin-top:10px;font-size:.8rem;color:var(--sub);background:var(--panel2);border-radius:8px;padding:8px 10px}
 .us-idx{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0 26px}
 .us-idx div{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:11px 14px}
@@ -1340,7 +1343,9 @@ function renderMK(){
       <div><h2>강한 업종</h2>${secList(m.strong)}<h2 style="margin-top:22px">약한 업종</h2>${secList(m.weak)}</div></section>
     <section><h2>유망 섹터 · 관찰 종목</h2><div class="cards">${picks}</div></section>
     ${(m.myPf||[]).length?`<section><h2>내 포트폴리오 체크</h2><ul class="plain mk-pf">${m.myPf.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></section>`:""}
-    ${sc.up||sc.down?`<section><h2>다음 거래일 시나리오</h2><div class="scen"><div class="s-up"><h3>상승 시</h3><p>${esc(sc.up||"")}</p></div><div class="s-dn"><h3>하락 시</h3><p>${esc(sc.down||"")}</p></div></div></section>`:""}`;
+    ${sc.up||sc.down?`<section><h2>다음 거래일 시나리오</h2><div class="scen"><div class="s-up"><h3>상승 시</h3><p>${esc(sc.up||"")}</p></div><div class="s-dn"><h3>하락 시</h3><p>${esc(sc.down||"")}</p></div></div></section>`:""}
+    ${Array.isArray(m.events)&&m.events.length?`<section><h2>주요 일정</h2><ul class="plain mk-ev">${m.events.map(e=>{const st=Array.isArray(e.stocks)?e.stocks:[];
+      return `<li><div style="display:grid;grid-template-columns:86px 1fr;gap:10px;align-items:baseline"><b class="num">${esc(e.date||"")}</b><div>${e.kind?`<span class="chip" style="margin:0 6px 0 0">${esc(e.kind)}</span>`:""}${esc(e.text||"")}${st.length?`<div style="font-size:.84rem;margin-top:3px">${st.map(n=>{const h=heldOf(n);return esc(n)+(h?` <span class="tag held">보유 ${h.qty}주</span>`:typeof tgFind==="function"&&tgFind(n)?' <span class="chip">관심</span>':"");}).join(" · ")}</div>`:""}</div></div></li>`;}).join("")}</ul></section>`:""}`;
 }
 (async function initMK(){
   try{
