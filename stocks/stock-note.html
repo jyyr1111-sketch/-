@@ -612,7 +612,9 @@ const $ = id => document.getElementById(id);
 
 // ---------- tabs ----------
 const tabs=[["t-p","p-p"],["t-s","p-s"],["t-n","p-n"],["t-f","p-f"],["t-c","p-c"],["t-g","p-g"],["t-m","p-m"],["t-u","p-u"],["t-v","p-v"],["t-a","p-a"]];
-tabs.forEach(([t,p])=>$(t).addEventListener("click",()=>{tabs.forEach(([t2,p2])=>{$(t2).setAttribute("aria-selected",t2===t);$(p2).hidden=t2!==t;});if(t==="t-a"&&AS)renderAS();if(t==="t-c"&&PF){renderPlans();renderCalc();}if(t==="t-v")renderV();if(t==="t-m"&&MK)renderMK();if(t==="t-u")renderUS();}));
+tabs.forEach(([t,p])=>$(t).addEventListener("click",()=>{tabs.forEach(([t2,p2])=>{$(t2).setAttribute("aria-selected",t2===t);$(p2).hidden=t2!==t;});if(t==="t-a"&&AS)renderAS();if(t==="t-c"&&PF){renderPlans();renderCalc();}if(t==="t-v")renderV();if(t==="t-m"&&MK)renderMK();if(t==="t-u")renderUS();if(t==="t-f")renderFN();if(t==="t-n")renderNW();if(t==="t-s")initFL();}));
+// 보유·관심 목록에서 지운 종목은 재무·뉴스·수급 탭에서도 바로 숨김(다음 자동 갱신 때 데이터에서도 빠짐)
+const alive=n=>!PF||!!heldOf(n)||(typeof tgFind==="function"&&!!tgFind(n));
 
 // ---------- portfolio ----------
 const SECTORS=["반도체","2차전지","조선·해양","전력·원전","로봇","바이오·의료기기","광통신","통신·IT","우주","건설","엔터","금융","화학·소재","부품","수소·에너지","ETF","기타"];
@@ -1256,7 +1258,7 @@ function renderFN(){
   const box=$("fn-list");
   if(!FN||!Array.isArray(FN.items)){box.className="muted";box.textContent="아직 정리된 재무 자료가 없어요.";return;}
   box.className="fn-grid";
-  const it=FN.items, cnt=g=>it.filter(x=>x.grade===g).length;
+  const it=FN.items.filter(x=>alive(x.name)), cnt=g=>it.filter(x=>x.grade===g).length;
   $("fn-sum").innerHTML=`<div><small>정리한 종목</small><b>${it.length}종목</b></div><div><small>위험</small><b class="up">${cnt("위험")}종목</b></div><div><small>주의</small><b>${cnt("주의")}종목</b></div><div><small>안정</small><b class="down">${cnt("안정")}종목</b></div>`;
   $("fn-date").textContent=FN.updated?FN.updated.slice(5,16).replace("T"," ").replace("-","/")+" 갱신":"";
   const f=$("fn-f").value, srt=$("fn-s").value;
@@ -1307,7 +1309,7 @@ function renderNW(){
   if(!NW){box.className="muted";box.textContent="아직 모은 뉴스가 없어요. 평일 장 마감 후에 채워져요.";return;}
   box.className="";
   $("nw-date").textContent=NW.updated?NW.updated.slice(5,16).replace("T"," ").replace("-","/")+" 갱신":"";
-  const f=$("nw-f").value, arr=NW.items.filter(x=>!f||(f==="r"?x.reports.length:f==="w"?x.watch:!x.watch));
+  const f=$("nw-f").value, arr=NW.items.filter(x=>alive(x.name)).filter(x=>!f||(f==="r"?x.reports.length:f==="w"?x.watch:!x.watch));
   const md=t=>t.slice(5).replace("-","/");
   box.innerHTML=arr.length?arr.map(x=>{const h=typeof heldOf==="function"?heldOf(x.name):null, r=h&&h.cur?(h.cur/h.buy-1)*100:null;
     const g=!h&&typeof tgFind==="function"?tgFind(x.name):null;
@@ -1338,6 +1340,8 @@ async function initFL(){
     return `<div class="flc num"><div class="t"><b>${esc(x.name)}</b><span class="${cls(x.chg)}">${won(x.close)}원 ${x.chg!=null?sgn(x.chg):""}</span></div>${lines}
       ${h?`<div class="h">보유 ${won(h.qty)}주 · 평단 ${won(h.buy)}원${r!=null?` · <span class="${cls(r)}">${pct(r)}</span>`:""}</div>`:""}</div>`;};
   const fill=(id,arr,mode,empty)=>{$(id).innerHTML=arr&&arr.length?arr.map(x=>card(x,mode)).join(""):`<p class="muted" style="margin:0">${empty}</p>`;};
+  const hd=a=>(a||[]).filter(x=>!PF||heldOf(x.name));
+  d={...d,items:hd(d.items),frgnRun:hd(d.frgnRun),organRun:hd(d.organRun)};
   fill("fl-list",d.items,"both","이날은 외국인과 기관이 함께 순매수한 보유 종목이 없어요.");
   fill("fl-frgn",d.frgnRun,"f",`외국인이 ${run}일 이상 연속으로 산 보유 종목이 없어요.`);
   fill("fl-organ",d.organRun,"o",`기관이 ${run}일 이상 연속으로 산 보유 종목이 없어요.`);
