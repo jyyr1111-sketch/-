@@ -1268,6 +1268,8 @@ function renderFN(){
         <div><small>ROE</small><b class="${cls(x.roe)}">${pc(x.roe,1)}</b></div><div><small>PER${x.per!=null?"":""}</small><b>${x.per==null?"-":x.per<0?"적자":Number(x.per).toFixed(1)+"배"}</b></div><div><small>PBR</small><b>${x.pbr==null?"-":Number(x.pbr).toFixed(2)+"배"}</b></div></div>
       <div class="op">연간 영업이익 ${ks.map(k=>`${yy(k)} <b class="${op[k]<0?"up":""}">${eok(op[k])}</b>`).join(" → ")}${x.growth!=null?` <span class="${cls(x.growth)}">(${x.growth>0?"+":""}${Math.round(x.growth).toLocaleString("ko-KR")}%)</span>`:x.turn?` <span class="${/흑자|축소/.test(x.turn)?"up":"down"}">(${esc(x.turn)})</span>`:""}<br>
         분기 영업이익 ${qk.map(k=>`${qq(k)} <b class="${qo[k]<0?"up":""}">${eok(qo[k])}</b>`).join(" → ")}</div>
+      ${x.target?(()=>{const c=(h&&h.cur)||x.cur, u=c?(x.target/c-1)*100:null, rc=x.recomm, rl=rc==null?"":rc>=4.5?"강력매수":rc>=3.5?"매수":rc>=2.5?"중립":"매도";
+        return `<div class="op" style="margin-top:4px">증권사 목표가 평균 <b>${won(x.target)}원</b>${u!=null?` <span class="${cls(u)}">(현재가 대비 ${pct(u)})</span>`:""}${rc!=null?` · 투자의견 ${rc.toFixed(1)} (${rl})`:""}</div>`;})():""}
       <ul>${(x.flags||[]).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`;}).join("")
     :'<p class="muted">해당하는 종목이 없어요.</p>';
 }

@@ -9,7 +9,8 @@
   3점 이상 위험, 1.5점 이상 주의, 그 외 안정. 금융업은 부채비율·당좌비율 제외. 근거는 flags 에 남긴다.
 - 현금흐름표·현금성자산은 이 자료원에 없어, 유동성은 당좌비율(현금화 쉬운 자산 ÷ 1년 안에 갚을 빚)과
   유보율(쌓아 둔 이익 ÷ 자본금)로 본다.
-- 결과: {"updated","items":[{name,code,sec,grade,flags,debt,quick,reserve,roe,per,pbr,annual,quarter,period,growth}]}
+- 증권사 컨센서스 목표주가 평균(target)과 투자의견 평균(recomm, 5점 만점: 5 강력매수 · 4 매수 · 3 중립)도 함께 담는다.
+- 결과: {"updated","items":[{name,code,sec,grade,flags,debt,quick,reserve,roe,per,pbr,annual,quarter,period,growth,turn,target,recomm,cur}]}
 """
 import json
 import os
@@ -63,6 +64,12 @@ def main(src, dst):
             continue
         if not ar and not qr:
             continue
+        target = recomm = None
+        try:
+            ci = up.get_json("https://m.stock.naver.com/api/stock/%s/integration" % c).get("consensusInfo") or {}
+            target, recomm = num(ci.get("priceTargetMean")), num(ci.get("recommMean"))
+        except Exception:
+            pass
         pk, debt = last_actual(qc, qr.get("부채비율", {}))
         _, quick = last_actual(qc, qr.get("당좌비율", {}))
         _, reserve = last_actual(qc, qr.get("유보율", {}))
@@ -127,7 +134,8 @@ def main(src, dst):
             flags.append("부채·유동성·이익 모두 무난")
         items.append({"name": h["name"], "code": c, "sec": h.get("sec"), "grade": grade, "flags": flags,
                       "debt": debt, "quick": quick, "reserve": reserve, "roe": roe, "per": per, "pbr": pbr,
-                      "period": pk, "annual": annual, "quarter": quarter, "growth": growth, "turn": turn, "score": score})
+                      "period": pk, "annual": annual, "quarter": quarter, "growth": growth, "turn": turn, "score": score,
+                      "target": target, "recomm": recomm, "cur": h.get("cur")})
     order = {"위험": 0, "주의": 1, "안정": 2}
     items.sort(key=lambda x: (order[x["grade"]], -x["score"], -(x["debt"] or 0)))
     out = {"updated": datetime.now(up.KST).isoformat(timespec="seconds"), "items": items}
