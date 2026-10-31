@@ -389,6 +389,14 @@ table.pl input.plin.q{width:72px}
 .fnc .op b{color:var(--ink);font-weight:600}
 .fnc ul{margin:6px 0 0;padding-left:16px;font-size:.82rem}
 .fnc li{margin:1px 0}
+.fct{margin:6px 0 4px}
+.fct table{width:100%;border-collapse:collapse;font-size:.72rem;table-layout:fixed}
+.fct th{font-weight:500;color:var(--sub);text-align:right;padding:3px 2px;border-bottom:1px solid var(--rule)}
+.fct td{text-align:right;padding:3px 2px;border-bottom:1px solid var(--rule);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fct th:first-child,.fct td:first-child{text-align:left;color:var(--sub);width:17%}
+.fct .e{background:var(--accent-soft)}
+.fct th.e{color:var(--accent)}
+.fct small{display:block;color:var(--sub);font-size:.7rem;margin-top:3px}
 .fl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .flc{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:11px 14px;font-size:.88rem}
 .flc .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -452,7 +460,7 @@ table.pl input.plin.q{width:72px}
   </div>
   <div id="p-f" role="tabpanel" hidden>
     <div id="fn-sum" class="sum num"></div>
-    <div class="toolbar"><label>보기 <select id="fn-f"><option value="">전체</option><option>위험</option><option>주의</option><option>안정</option></select></label>
+    <div class="toolbar"><label>보기 <select id="fn-f"><option value="">전체</option><option value="h">보유 종목만</option><option value="w">관심 종목만</option><option>위험</option><option>주의</option><option>안정</option></select></label>
       <label>정렬 <select id="fn-s"><option value="">등급순</option><option value="debt">부채비율 높은 순</option><option value="quick">당좌비율 낮은 순</option><option value="growth">올해 예상 이익 증가 순</option></select></label><span class="status" id="fn-date"></span></div>
     <div id="fn-list" class="muted">불러오는 중…</div>
     <p class="note">네이버 금융 재무(최근 분기 실적·증권사 컨센서스)를 매일 장 마감 후 모아요. 금액은 억원, E는 증권사 예상치예요.<br>
@@ -1252,7 +1260,7 @@ function renderFN(){
   $("fn-sum").innerHTML=`<div><small>정리한 종목</small><b>${it.length}종목</b></div><div><small>위험</small><b class="up">${cnt("위험")}종목</b></div><div><small>주의</small><b>${cnt("주의")}종목</b></div><div><small>안정</small><b class="down">${cnt("안정")}종목</b></div>`;
   $("fn-date").textContent=FN.updated?FN.updated.slice(5,16).replace("T"," ").replace("-","/")+" 갱신":"";
   const f=$("fn-f").value, srt=$("fn-s").value;
-  let arr=it.filter(x=>!f||x.grade===f);
+  let arr=it.filter(x=>!f||(f==="h"?!x.watch:f==="w"?x.watch:x.grade===f));
   if(srt==="debt")arr=arr.slice().sort((a,b)=>(b.debt??-1)-(a.debt??-1));
   else if(srt==="quick")arr=arr.slice().sort((a,b)=>(a.quick??1e9)-(b.quick??1e9));
   else if(srt==="growth")arr=arr.slice().sort((a,b)=>(b.growth??-1e9)-(a.growth??-1e9));
@@ -1263,15 +1271,27 @@ function renderFN(){
   box.innerHTML=arr.length?arr.map(x=>{const h=heldOf(x.name), r=h&&h.cur?(h.cur/h.buy-1)*100:null;
     const op=(x.annual||{})["영업이익"]||{}, ks=Object.keys(op).filter(k=>op[k]!=null).sort().slice(-3);
     const qo=(x.quarter||{})["영업이익"]||{}, qk=Object.keys(qo).filter(k=>qo[k]!=null).sort().slice(-3);
-    return `<div class="fnc num"><div class="t"><span><b>${esc(x.name)}</b><span class="g ${x.grade}">${x.grade}</span></span>${h?`<small class="muted">보유 ${won(h.qty)}주${r!=null?` · <span class="${cls(r)}">${pct(r)}</span>`:""}</small>`:""}</div>
+    return `<div class="fnc num"><div class="t"><span><b>${esc(x.name)}</b><span class="g ${x.grade}">${x.grade}</span></span>${h?`<small class="muted">보유 ${won(h.qty)}주${r!=null?` · <span class="${cls(r)}">${pct(r)}</span>`:""}</small>`:x.watch?'<span class="chip" style="margin:0">관심</span>':""}</div>
       <div class="m"><div><small>부채비율</small><b class="${x.debt>=200?"up":""}">${pc(x.debt)}</b></div><div><small>당좌비율</small><b class="${x.quick!=null&&x.quick<50?"up":""}">${pc(x.quick)}</b></div><div><small>유보율</small><b>${pc(x.reserve)}</b></div>
         <div><small>ROE</small><b class="${cls(x.roe)}">${pc(x.roe,1)}</b></div><div><small>PER${x.per!=null?"":""}</small><b>${x.per==null?"-":x.per<0?"적자":Number(x.per).toFixed(1)+"배"}</b></div><div><small>PBR</small><b>${x.pbr==null?"-":Number(x.pbr).toFixed(2)+"배"}</b></div></div>
-      <div class="op">연간 영업이익 ${ks.map(k=>`${yy(k)} <b class="${op[k]<0?"up":""}">${eok(op[k])}</b>`).join(" → ")}${x.growth!=null?` <span class="${cls(x.growth)}">(${x.growth>0?"+":""}${Math.round(x.growth).toLocaleString("ko-KR")}%)</span>`:x.turn?` <span class="${/흑자|축소/.test(x.turn)?"up":"down"}">(${esc(x.turn)})</span>`:""}<br>
-        분기 영업이익 ${qk.map(k=>`${qq(k)} <b class="${qo[k]<0?"up":""}">${eok(qo[k])}</b>`).join(" → ")}</div>
+      ${fcTable(x.fc)||`<div class="op">연간 영업이익 ${ks.map(k=>`${yy(k)} <b class="${op[k]<0?"up":""}">${eok(op[k])}</b>`).join(" → ")}${x.growth!=null?` <span class="${cls(x.growth)}">(${x.growth>0?"+":""}${Math.round(x.growth).toLocaleString("ko-KR")}%)</span>`:x.turn?` <span class="${/흑자|축소/.test(x.turn)?"up":"down"}">(${esc(x.turn)})</span>`:""}<br>
+        분기 영업이익 ${qk.map(k=>`${qq(k)} <b class="${qo[k]<0?"up":""}">${eok(qo[k])}</b>`).join(" → ")}</div>`}
+      ${fcTable(x.fc)?`<div class="op">분기 영업이익 ${qk.map(k=>`${qq(k)} <b class="${qo[k]<0?"up":""}">${eok(qo[k])}</b>`).join(" → ")}${x.growth!=null?` · 올해 예상 <span class="${cls(x.growth)}">${x.growth>0?"+":""}${Math.round(x.growth).toLocaleString("ko-KR")}%</span>`:x.turn?` · <span class="${/흑자|축소/.test(x.turn)?"up":"down"}">${esc(x.turn)}</span>`:""}</div>`:""}
       ${x.target?(()=>{const c=(h&&h.cur)||x.cur, u=c?(x.target/c-1)*100:null, rc=x.recomm, rl=rc==null?"":rc>=4.5?"강력매수":rc>=3.5?"매수":rc>=2.5?"중립":"매도";
         return `<div class="op" style="margin-top:4px">증권사 목표가 평균 <b>${won(x.target)}원</b>${u!=null?` <span class="${cls(u)}">(현재가 대비 ${pct(u)})</span>`:""}${rc!=null?` · 투자의견 ${rc.toFixed(1)} (${rl})`:""}</div>`;})():""}
       <ul>${(x.flags||[]).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`;}).join("")
     :'<p class="muted">해당하는 종목이 없어요.</p>';
+}
+// 실적 3년 + 예상(E) 3년 표 (예상치가 하나도 없으면 실적만, 표 자체가 없으면 null)
+function fcTable(fc){
+  if(!fc||!Array.isArray(fc.years))return null;
+  const R=fc.rows||{}, ys=fc.years, keep=ys.map((y,i)=>!y.endsWith("E")||Object.values(R).some(v=>v&&v[i]!=null)).map((k,i)=>k?i:-1).filter(i=>i>=0);
+  if(!keep.length)return null;
+  const sh=v=>v==null?"-":Math.abs(v)>=10000?(v/10000).toFixed(Math.abs(v)>=100000?0:1)+"조":Math.round(v).toLocaleString("ko-KR");
+  const rows=[["매출액","매출"],["영업이익","영업이익"],["당기순이익","순이익"],["영업현금흐름","영업현금"],["FCF","FCF"],["부채비율","부채비율"],["EPS","EPS"]];
+  const head=`<tr><th></th>${keep.map(i=>`<th class="${ys[i].endsWith("E")?"e":""}">'${ys[i].slice(2)}</th>`).join("")}</tr>`;
+  const body=rows.filter(([k])=>R[k]).map(([k,l])=>`<tr><td>${l}</td>${keep.map(i=>{const v=R[k][i];return `<td class="${ys[i].endsWith("E")?"e ":""}${v!=null&&v<0?"up":""}">${k==="부채비율"?(v==null?"-":Math.round(v)+"%"):k==="EPS"?(v==null?"-":Math.round(v).toLocaleString("ko-KR")):sh(v)}</td>`;}).join("")}</tr>`).join("");
+  return `<div class="fct"><table>${head}${body}</table><small>단위 억원(조) · E는 증권사 예상</small></div>`;
 }
 $("fn-f").addEventListener("change",renderFN);$("fn-s").addEventListener("change",renderFN);
 
