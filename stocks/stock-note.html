@@ -407,7 +407,8 @@ table.pl input.plin.q{width:72px}
 /* 탭: 옆으로 밀지 않고 여러 줄로 */
 .tabs{flex-wrap:wrap;overflow-x:visible;white-space:normal}
 /* 휴대폰: 짧은 이름으로 한 줄에 모두 */
-@media (max-width:600px){.tabs{flex-wrap:nowrap;gap:2px;padding:4px}.tabs button{flex:1 1 0;min-width:0;padding:8px 0;font-size:0;text-align:center}.tabs button::before{content:attr(data-s);font-size:.82rem;letter-spacing:-.02em}}
+.tabs{flex-wrap:nowrap;gap:2px;padding:4px}.tabs button{flex:1 1 0;min-width:0;padding:8px 0;font-size:0;text-align:center}.tabs button::before{content:attr(data-s);font-size:.95rem;letter-spacing:-.02em}
+@media (max-width:600px){.tabs button::before{font-size:.82rem}}
 .vid .warn{margin-top:10px;font-size:.8rem;color:var(--sub);background:var(--panel2);border-radius:8px;padding:8px 10px}
 .us-idx{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0 26px}
 .us-idx div{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:11px 14px}
