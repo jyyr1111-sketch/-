@@ -397,6 +397,7 @@ table.pl input.plin.q{width:72px}
 .fct .e{background:var(--accent-soft)}
 .fct th.e{color:var(--accent)}
 .fct small{display:block;color:var(--sub);font-size:.7rem;margin-top:3px}
+.toolbar .qsearch{flex:1 1 160px;min-width:0;width:auto!important}
 .fl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .flc{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:11px 14px;font-size:.88rem}
 .flc .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -455,13 +456,13 @@ table.pl input.plin.q{width:72px}
     <p class="note">내 포트폴리오 보유 종목만 봅니다. 매일 밤 10시쯤 Claude가 네이버 금융의 종목별 투자자 동향으로 그날 기준을 정리해요(그때까지 수치가 안 올라오면 다음 날 아침 8시 48분에 채워요). 금액은 순매수 수량 × 그날 종가로 어림한 값이고, 연속 순매수 누적 금액은 연속 기간 동안의 합입니다. 투자 권유가 아닙니다.</p>
   </div>
   <div id="p-n" role="tabpanel" hidden>
-    <div class="toolbar"><label>보기 <select id="nw-f"><option value="">전체</option><option value="h">보유 종목만</option><option value="w">관심 종목만</option><option value="r">리포트만</option></select></label><span class="status" id="nw-date"></span></div>
+    <div class="toolbar"><input id="nw-q" class="qsearch" type="search" placeholder="종목 검색 (이름·제목)" aria-label="뉴스 종목 검색"><label>보기 <select id="nw-f"><option value="">전체</option><option value="h">보유 종목만</option><option value="w">관심 종목만</option><option value="r">리포트만</option></select></label><span class="status" id="nw-date"></span></div>
     <div id="nw-list" class="muted">불러오는 중…</div>
     <p class="note">보유 종목과 관심 종목을 봅니다. 매일 오후 3시 52분 Claude가 네이버 금융에서 최근 3일 뉴스(종목당 최대 4건)와 최근 30일 증권사 리포트(종목당 최대 3건) 링크를 모아요. 제목을 누르면 원문이 열립니다. 투자 권유가 아닙니다.</p>
   </div>
   <div id="p-f" role="tabpanel" hidden>
     <div id="fn-sum" class="sum num"></div>
-    <div class="toolbar"><label>보기 <select id="fn-f"><option value="">전체</option><option value="h">보유 종목만</option><option value="w">관심 종목만</option><option>위험</option><option>주의</option><option>안정</option></select></label>
+    <div class="toolbar"><input id="fn-q" class="qsearch" type="search" placeholder="종목 검색" aria-label="재무 종목 검색"><label>보기 <select id="fn-f"><option value="">전체</option><option value="h">보유 종목만</option><option value="w">관심 종목만</option><option>위험</option><option>주의</option><option>안정</option></select></label>
       <label>정렬 <select id="fn-s"><option value="">등급순</option><option value="debt">부채비율 높은 순</option><option value="quick">당좌비율 낮은 순</option><option value="growth">올해 예상 이익 증가 순</option></select></label><span class="status" id="fn-date"></span></div>
     <div id="fn-list" class="muted">불러오는 중…</div>
     <p class="note">네이버 금융 재무(최근 분기 실적·증권사 컨센서스)를 매일 장 마감 후 모아요. 금액은 억원, E는 증권사 예상치예요.<br>
@@ -1263,7 +1264,8 @@ function renderFN(){
   $("fn-sum").innerHTML=`<div><small>정리한 종목</small><b>${it.length}종목</b></div><div><small>위험</small><b class="up">${cnt("위험")}종목</b></div><div><small>주의</small><b>${cnt("주의")}종목</b></div><div><small>안정</small><b class="down">${cnt("안정")}종목</b></div>`;
   $("fn-date").textContent=FN.updated?FN.updated.slice(5,16).replace("T"," ").replace("-","/")+" 갱신":"";
   const f=$("fn-f").value, srt=$("fn-s").value;
-  let arr=it.filter(x=>!f||(f==="h"?!x.watch:f==="w"?x.watch:x.grade===f));
+  const q=norm($("fn-q").value||"");
+  let arr=it.filter(x=>!q||norm(x.name).includes(q)).filter(x=>!f||(f==="h"?!x.watch:f==="w"?x.watch:x.grade===f));
   if(srt==="debt")arr=arr.slice().sort((a,b)=>(b.debt??-1)-(a.debt??-1));
   else if(srt==="quick")arr=arr.slice().sort((a,b)=>(a.quick??1e9)-(b.quick??1e9));
   else if(srt==="growth")arr=arr.slice().sort((a,b)=>(b.growth??-1e9)-(a.growth??-1e9));
@@ -1296,7 +1298,7 @@ function fcTable(fc){
   const body=rows.filter(([k])=>R[k]).map(([k,l])=>`<tr><td>${l}</td>${keep.map(i=>{const v=R[k][i];return `<td class="${ys[i].endsWith("E")?"e ":""}${v!=null&&v<0?"up":""}">${k==="부채비율"?(v==null?"-":Math.round(v)+"%"):k==="EPS"?(v==null?"-":Math.round(v).toLocaleString("ko-KR")):sh(v)}</td>`;}).join("")}</tr>`).join("");
   return `<div class="fct"><table>${head}${body}</table><small>단위 억원(조) · E는 증권사 예상</small></div>`;
 }
-$("fn-f").addEventListener("change",renderFN);$("fn-s").addEventListener("change",renderFN);
+$("fn-f").addEventListener("change",renderFN);$("fn-q").addEventListener("input",renderFN);$("fn-s").addEventListener("change",renderFN);
 
 // ---------- 뉴스 · 리포트 (Claude가 평일 장 마감 후 news 문서를 갱신) ----------
 let NW=null;
@@ -1310,7 +1312,7 @@ function renderNW(){
   if(!NW){box.className="muted";box.textContent="아직 모은 뉴스가 없어요. 평일 장 마감 후에 채워져요.";return;}
   box.className="";
   $("nw-date").textContent=NW.updated?NW.updated.slice(5,16).replace("T"," ").replace("-","/")+" 갱신":"";
-  const f=$("nw-f").value, arr=NW.items.filter(x=>alive(x.name)).filter(x=>!f||(f==="r"?x.reports.length:f==="w"?x.watch:!x.watch));
+  const f=$("nw-f").value, q=norm($("nw-q").value||""), arr=NW.items.filter(x=>alive(x.name)).filter(x=>!q||norm(x.name).includes(q)||[...x.news,...x.reports].some(n=>norm(n.t||"").includes(q))).filter(x=>!f||(f==="r"?x.reports.length:f==="w"?x.watch:!x.watch));
   const md=t=>t.slice(5).replace("-","/");
   box.innerHTML=arr.length?arr.map(x=>{const h=typeof heldOf==="function"?heldOf(x.name):null, r=h&&h.cur?(h.cur/h.buy-1)*100:null;
     const g=!h&&typeof tgFind==="function"?tgFind(x.name):null;
@@ -1320,7 +1322,7 @@ function renderNW(){
       ${f==="r"?"":x.news.map(n=>`<li><a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.t)}</a><small>${esc(n.src)} · ${md(n.dt)}</small></li>`).join("")}</ul></div>`;}).join("")
     :'<p class="muted">해당하는 종목이 없어요.</p>';
 }
-$("nw-f").addEventListener("change",renderNW);
+$("nw-f").addEventListener("change",renderNW);$("nw-q").addEventListener("input",renderNW);
 
 async function initFL(){
   let d=null;
