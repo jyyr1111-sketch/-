@@ -416,6 +416,25 @@ table.pl input.plin.q{width:72px}
 .m3t td.up small,.m3t td.down small{color:inherit;opacity:.75}
 .m3t tr.tot td{font-weight:700;border-top:2px solid var(--accent);border-bottom:0}
 .bsp{display:block;font-size:.7rem;color:var(--accent);line-height:1.35}
+/* 휴대폰: 보유 종목 표를 카드처럼 — 이름 한 줄 + 숫자 5칸, 옆으로 밀지 않게 */
+@media (max-width:600px){
+  #pf,#pf tbody{display:block;width:100%}
+  #pf tr:first-child{display:none}
+  #pf tr.grp{display:block} #pf tr.grp td{display:block}
+  #pf tr[data-i]:not(.edit){display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px 4px;padding:8px 0;border-bottom:1px solid var(--rule)}
+  #pf tr[data-i]:not(.edit) td{display:block;border:0;padding:0;font-size:.72rem;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #pf tr[data-i]:not(.edit) td small{font-size:.66rem}
+  #pf tr[data-i]:not(.edit) td:first-child{grid-column:1/-1;white-space:normal;font-size:.86rem;padding-bottom:3px}
+  #pf tr[data-i]:not(.edit) td:first-child small{display:inline;font-size:.72rem;margin-left:6px}
+  #pf tr[data-i]:not(.edit) td:not(:first-child)::before{display:block;font-size:.62rem;color:var(--sub)}
+  #pf tr[data-i]:not(.edit) td:nth-child(2)::before{content:"매입"}
+  #pf tr[data-i]:not(.edit) td:nth-child(3)::before{content:"현재"}
+  #pf tr[data-i]:not(.edit) td:nth-child(4)::before{content:"손익"}
+  #pf tr[data-i]:not(.edit) td:nth-child(5)::before{content:"목표"}
+  #pf tr[data-i]:not(.edit) td:nth-child(6)::before{content:"예상 이익"}
+  #pf tr.edit{display:block} #pf tr.edit td{display:block}
+  #pf tr[data-i]:not(.edit) td .src,#pf tr[data-i]:not(.edit) td .star{display:none} /* 목표가 출처 표시는 종목을 누르면 보임 */
+}
 .fl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .flc{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:11px 14px;font-size:.88rem}
 .flc .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
