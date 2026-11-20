@@ -415,9 +415,7 @@ table.pl input.plin.q{width:72px}
 .m3t td small{display:block;font-size:.72rem;color:var(--sub);font-weight:400}
 .m3t td.up small,.m3t td.down small{color:inherit;opacity:.75}
 .m3t tr.tot td{font-weight:700;border-top:2px solid var(--accent);border-bottom:0}
-.ixt{table-layout:fixed}
-.ixt th:nth-child(1){width:38%} .ixt th:nth-child(2){width:27%}
-.ixt td,.ixt .r{white-space:normal;word-break:keep-all}
+.bsp{display:block;font-size:.7rem;color:var(--accent);line-height:1.35}
 .fl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .flc{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:11px 14px;font-size:.88rem}
 .flc .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -569,11 +567,6 @@ table.pl input.plin.q{width:72px}
         <div><h2>섹터 비중</h2><div id="mix-sec"></div></div>
         <div><h2>코스피 · 코스닥</h2><div id="mix-mkt"></div></div>
       </div>
-      <section id="ix-box" hidden style="margin-bottom:26px"><h2>지수로 보는 내 평단</h2>
-        <div class="sum num" id="ix-sum"></div>
-        <div class="toolbar"><label>정렬 <select id="ix-s"><option value="">본전까지 먼 순</option><option value="near">본전 가까운 순</option><option value="name">이름순</option></select></label><span class="status" id="ix-d"></span></div>
-        <div class="tbl-wrap"><table class="m3t ixt num" id="ix-t"></table></div><button class="addrow" type="button" id="ix-more" hidden></button>
-        <p class="note" style="border:0;padding-top:6px">본전 지수 = 지금 지수 × 평단 ÷ 현재가. 종목이 시장 지수만큼 움직인다고 가정했을 때 내 평단에 닿는 지수예요(실제로는 종목마다 움직임이 달라요). 평단 시점은 최근 6개월 중 종가가 내 평단 ±3% 안이었던 가장 최근 날과 그날 지수이고, 그런 날이 없으면 가장 가까웠던 날을 보여줘요.</p></section>
       <h2>보유 종목</h2>
       <div class="toolbar">
         <label>시장 <select id="f-mkt"><option value="">전체</option><option>코스피</option><option>코스닥</option></select></label>
@@ -747,7 +740,7 @@ function renderPF(){
       const vs=x=>h.cur?(h.cur>=x?'<span class="up">돌파</span>':pct((x/h.cur-1)*100)):"";
       const pl=h.cur?(h.cur-h.buy)*h.qty:null, cl=r==null?"":r>=0?"up":"down";
       html+=`<tr data-i="${i}" class="${op?"open":""}">
-      <td><button class="nmbtn" data-open="${i}" aria-expanded="${op}">${h.name}</button><small>${h.mkt} · ${h.qty}주${h.term?` · <span class="term t-${h.term}">${h.term}</span>`:""}</small></td>
+      <td><button class="nmbtn" data-open="${i}" aria-expanded="${op}">${h.name}</button><small>${h.mkt} · ${h.qty}주${h.term?` · <span class="term t-${h.term}">${h.term}</span>`:""}${IX?baseOf(h):""}</small></td>
       <td>${won(h.buy*h.qty)}<small>${won(h.buy)}</small></td><td>${h.cur?won(h.cur*h.qty)+"<small>"+won(h.cur)+"</small>":'<span class="muted">-</span>'}</td>
       <td class="${cl}">${pl==null?'<span class="muted">-</span>':won(pl)}<small class="${cl}">${r==null?"":pct(r)}</small></td>
       
@@ -760,11 +753,10 @@ function renderPF(){
         <label>시장<select data-k="mkt">${["코스피","코스닥"].map(m=>`<option${m===h.mkt?" selected":""}>${m}</option>`).join("")}</select></label>
         <label>구분<select data-k="term"><option value="">미분류</option>${TERMS.map(t=>`<option${t===h.term?" selected":""}>${t}</option>`).join("")}</select></label>
         <label>섹터<select data-k="sec">${SECTORS.map(s=>`<option${s===h.sec?" selected":""}>${s}</option>`).join("")}</select></label>
-        <button class="del${DEL===h.id?" confirm":""}" data-del="${i}">${DEL===h.id?"한 번 더 누르면 삭제":"종목 삭제"}</button></div><p class="muted" style="font-size:.8rem;margin:8px 0 0">${myTgt(h)?"목표가: 관심 종목(★) — 여기서 고치면 관심 종목 목표가도 함께 바뀝니다":h.tgt&&!h.tgtSrc?"목표가: 직접 입력":h.tgtSrc?"목표가 출처: "+h.tgtSrc+" (직접 입력하면 덮어씁니다)":"목표가: 증권사 목표가를 못 찾아 Claude 기준 적용"}${h.curAuto?" · 현재가: "+h.curAuto+" 종가 자동 반영":""}</p></td></tr>`;
+        <button class="del${DEL===h.id?" confirm":""}" data-del="${i}">${DEL===h.id?"한 번 더 누르면 삭제":"종목 삭제"}</button></div><p class="muted" style="font-size:.8rem;margin:8px 0 0">${myTgt(h)?"목표가: 관심 종목(★) — 여기서 고치면 관심 종목 목표가도 함께 바뀝니다":h.tgt&&!h.tgtSrc?"목표가: 직접 입력":h.tgtSrc?"목표가 출처: "+h.tgtSrc+" (직접 입력하면 덮어씁니다)":"목표가: 증권사 목표가를 못 찾아 Claude 기준 적용"}${h.curAuto?" · 현재가: "+h.curAuto+" 종가 자동 반영":""}${IX&&baseOf(h,1)?"<br>"+baseOf(h,1):""}</p></td></tr>`;
     });
   });
   $("pf").innerHTML=html;
-  if(typeof renderIX==="function"&&IX) renderIX();
 }
 
 $("pf").addEventListener("change",e=>{
@@ -1365,36 +1357,19 @@ function renderNW(){
 }
 $("nw-f").addEventListener("change",renderNW);$("nw-q").addEventListener("input",renderNW);
 
-// ---------- 지수로 보는 내 평단 (flows 문서의 index·base 사용) ----------
-let IX=null, IXALL=false;
+// ---------- 평단 시점 지수 (flows 문서의 base: 종가가 평단 근처였던 최근 날과 그날 지수) ----------
+let IX=null;
 async function initIX(){
   try{const c=window.claude;const [db,user]=c?await Promise.all([c.use("db"),c.use("user")]):[null,null];const uid=user?await user.id():null;
-    if(db&&uid){const s=await db.doc("data/users/"+uid+"/flows").get();if(s.exists){const d=s.data();IX={index:d.index||{},base:d.base||{}};}}}catch(e){}
-  renderIX();
+    if(db&&uid){const s=await db.doc("data/users/"+uid+"/flows").get();if(s.exists){const d=s.data();IX={base:d.base||{}};}}}catch(e){}
+  if(IX&&PF) renderPF();
 }
-function renderIX(){
-  if(!IX||!PF||!IX.index.KOSPI){$("ix-box").hidden=true;return;}
-  $("ix-box").hidden=false;
-  const key=h=>h.mkt==="코스닥"?"KOSDAQ":"KOSPI", nm={KOSPI:"코스피",KOSDAQ:"코스닥"};
-  const n2=v=>v==null?"-":Number(v).toLocaleString("ko-KR",{maximumFractionDigits:2,minimumFractionDigits:2});
-  const md=t=>t?t.slice(2).replace(/-/g,"/"):"";
-  const hs=PF.holdings.filter(h=>h.cur&&h.buy&&IX.index[key(h)]);
-  // 시장별 전체: 지수 × 매입금액 ÷ 평가금액
-  $("ix-sum").innerHTML=["KOSPI","KOSDAQ"].map(k=>{const g=hs.filter(h=>key(h)===k);if(!g.length)return "";
-    const c=g.reduce((a,h)=>a+h.buy*h.qty,0),v=g.reduce((a,h)=>a+h.cur*h.qty,0),I=IX.index[k].close,be=I*c/v;
-    return `<div><small>${nm[k]} 지금 ${n2(I)} → 내 ${nm[k]} 종목 본전</small><b>${n2(be)}</b><span class="${cls(be-I)}" style="font-size:.8rem">${be>=I?"+":""}${pct((be/I-1)*100).replace(/^\+?/,"")} 필요</span></div>`;}).join("");
-  $("ix-d").textContent=`${md(IX.index.KOSPI.date)} 종가 기준`;
-  const rows=hs.map(h=>{const I=IX.index[key(h)].close, be=I*h.buy/h.cur, b=IX.base[h.name];return {h,I,be,need:(h.buy/h.cur-1)*100,b};});
-  const s=$("ix-s").value;
-  rows.sort(s==="near"?(a,b)=>a.need-b.need:s==="name"?(a,b)=>a.h.name.localeCompare(b.h.name,"ko"):(a,b)=>b.need-a.need);
-  const N=10, shown=IXALL?rows:rows.slice(0,N);
-  $("ix-more").hidden=rows.length<=N; $("ix-more").textContent=IXALL?"접기":`전체 ${rows.length}종목 보기`;
-  $("ix-t").innerHTML=`<tr><th>종목</th><th class="r">본전 지수</th><th class="r">평단 시점</th></tr>`+shown.map(({h,I,be,need,b})=>
-    `<tr><td><b>${esc(h.name)}</b><small>${nm[key(h)]} · 평단 ${won(h.buy)} · 현재 ${won(h.cur)}</small></td>
-      <td class="r ${need>0?"up":"down"}">${n2(be)}<small>${need>0?"+"+need.toFixed(1)+"% 필요":"이미 수익"}</small></td>
-      <td class="r">${b&&b.idx?`${md(b.date)}<small>${nm[b.mkt]} ${n2(b.idx)}${b.near?"":` · 가장 근접(${b.diff>0?"+":""}${b.diff}%)`}</small>`:'<span class="muted">-</span>'}</td></tr>`).join("");
+function baseOf(h,full){
+  const b=IX&&IX.base[h.name]; if(!b||!b.idx) return "";
+  const nm={KOSPI:"코스피",KOSDAQ:"코스닥"}[b.mkt]||"", d=b.date.slice(2).replace(/-/g,"/"), v=Number(b.idx).toLocaleString("ko-KR",{maximumFractionDigits:2});
+  return full?`평단 시점: ${d} ${nm} ${v}${b.near?"":` (6개월 내 평단 근처 없음 · 가장 근접한 날, 종가 ${b.diff>0?"+":""}${b.diff}%)`}`
+    :`<span class="bsp">평단 ${d} · ${nm} ${v}${b.near?"":"*"}</span>`;
 }
-$("ix-s").addEventListener("change",renderIX);$("ix-more").addEventListener("click",()=>{IXALL=!IXALL;renderIX();});
 
 // 월별 외국인·기관 누적 순매수: 최근 6개월 중 고른 기간(기본: 이번 달)만 더해 보여줌
 let FLM3=null;
