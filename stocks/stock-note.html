@@ -399,6 +399,15 @@ table.pl input.plin.q{width:72px}
 .fct small{display:block;color:var(--sub);font-size:.7rem;margin-top:3px}
 .toolbar .qsearch{order:2;margin-left:auto;flex:0 1 220px;min-width:120px;width:auto!important;font:inherit;font-size:.9rem;color:var(--ink);background:var(--panel2);border:1px solid var(--rule);border-radius:8px;padding:7px 10px;-webkit-appearance:none;appearance:none}
 #nw-date,#fn-date{order:3;flex-basis:100%;text-align:right;margin-left:0}
+.mtot{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:12px}
+.mtot caption{text-align:left;font-size:.8rem;color:var(--sub);padding-bottom:4px}
+.mtot th{font-weight:500;color:var(--sub);font-size:.74rem;padding:4px 3px;border-bottom:1px solid var(--rule)}
+.mtot td{padding:5px 3px;border-bottom:1px solid var(--rule);white-space:nowrap}
+.mtot .r{text-align:right}
+.mtot td small{display:block;font-size:.72rem}
+.mtot tr.tot td{font-weight:700;border-top:2px solid var(--accent);border-bottom:0}
+.term{font-size:.7rem;padding:0 6px;border-radius:8px;background:var(--panel2);white-space:nowrap;display:inline-block}
+.term.t-장기{background:var(--down-soft);color:var(--down)} .term.t-단기{background:var(--accent-soft);color:var(--accent)} .term.t-좃됨{background:var(--up-soft);color:var(--up)}
 .fl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .flc{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:11px 14px;font-size:.88rem}
 .flc .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -550,6 +559,7 @@ table.pl input.plin.q{width:72px}
       <h2>보유 종목</h2>
       <div class="toolbar">
         <label>시장 <select id="f-mkt"><option value="">전체</option><option>코스피</option><option>코스닥</option></select></label>
+        <label>구분 <select id="f-term"><option value="">전체</option><option>장기</option><option>단기</option><option>좃됨</option><option value="-">미분류</option></select></label>
         <input id="f-tp" type="hidden">
         <span class="status" id="pf-status"></span>
       </div>
@@ -671,9 +681,11 @@ function persist(){
   },500);
 }
 
+const TERMS=["장기","단기","좃됨"];
 function renderPF(){
   const f=$("f-mkt").value;
-  const rows=PF.holdings.filter(h=>!f||h.mkt===f);
+  const ft=$("f-term").value;
+  const rows=PF.holdings.filter(h=>(!f||h.mkt===f)&&(!ft||(ft==="-"?!h.term:h.term===ft)));
   // summary (all holdings)
   const all=PF.holdings, cost=all.reduce((a,h)=>a+h.buy*h.qty,0);
   const priced=all.filter(h=>h.cur), pc=priced.reduce((a,h)=>a+h.buy*h.qty,0), pv=priced.reduce((a,h)=>a+h.cur*h.qty,0);
@@ -694,6 +706,13 @@ function renderPF(){
     Object.entries(m).sort((a,b)=>b[1].c-a[1].c).map(([k,o])=>{const r=o.pc?(o.pv/o.pc-1)*100:null;
       return `<div class="mrow"><span>${k}</span><div class="track"><span style="width:${o.c/cost*100}%"></span></div><span class="num" style="text-align:right">${(o.c/cost*100).toFixed(1)}%</span><span class="num ${r==null?"muted":r>=0?"up":"down"}" style="text-align:right" title="현재가 입력 ${o.pn}/${o.n}종목 기준">${r==null?"-":pct(r)}<small style="font-size:.7rem;color:var(--sub)"> ${o.pn}/${o.n}</small></span></div>`;}).join("");};
   $("mix-sec").innerHTML=mix("sec"); $("mix-mkt").innerHTML=mix("mkt");
+  // 코스피·코스닥, 장기·단기·좃됨 합계 금액
+  const sumBy=(label,keys,get)=>{const rs=keys.map(k=>{const hs=all.filter(h=>get(h)===k);if(!hs.length)return null;
+      const c=hs.reduce((a,h)=>a+h.buy*h.qty,0), v=hs.reduce((a,h)=>a+(h.cur||h.buy)*h.qty,0);return {k:k||"미분류",n:hs.length,c,v};}).filter(Boolean);
+    const T={k:"합계",n:all.length,c:rs.reduce((a,x)=>a+x.c,0),v:rs.reduce((a,x)=>a+x.v,0)};
+    const tr=(x,b)=>`<tr${b?' class="tot"':""}><td>${esc(x.k)} <small class="muted">${x.n}</small></td><td class="r">${won(x.c)}</td><td class="r">${won(x.v)}</td><td class="r ${cls(x.v-x.c)}">${x.v-x.c>0?"+":""}${won(x.v-x.c)}<small>${x.c?pct((x.v/x.c-1)*100):""}</small></td></tr>`;
+    return `<table class="mtot num"><caption>${label}</caption><tr><th></th><th class="r">매입</th><th class="r">평가</th><th class="r">손익</th></tr>${rs.map(x=>tr(x)).join("")}${tr(T,1)}</table>`;};
+  $("mix-mkt").insertAdjacentHTML("beforeend",sumBy("시장별 합계",["코스피","코스닥"],h=>h.mkt)+(all.some(h=>h.term)?sumBy("구분별 합계",[...TERMS,""],h=>h.term||""):""));
   $("mix-sec").insertAdjacentHTML("beforeend",'<p class="note" style="border:0;padding-top:6px">비중은 매입금액 기준, 손익률은 현재가가 입력된 종목만 계산(옆 숫자는 현재가 입력 종목 수/전체 종목 수)</p>');
 
   const head=`<tr><th>종목</th><th>매입가<small>매입 단가</small></th><th>현재가<small>현재 단가</small></th><th>손익금<small>수익률</small></th><th>목표가<small>목표 단가</small></th><th>예상 이익금<small>수익률</small></th></tr>`;
@@ -710,7 +729,7 @@ function renderPF(){
       const vs=x=>h.cur?(h.cur>=x?'<span class="up">돌파</span>':pct((x/h.cur-1)*100)):"";
       const pl=h.cur?(h.cur-h.buy)*h.qty:null, cl=r==null?"":r>=0?"up":"down";
       html+=`<tr data-i="${i}" class="${op?"open":""}">
-      <td><button class="nmbtn" data-open="${i}" aria-expanded="${op}">${h.name}</button><small>${h.mkt} · ${h.qty}주</small></td>
+      <td><button class="nmbtn" data-open="${i}" aria-expanded="${op}">${h.name}</button><small>${h.mkt} · ${h.qty}주${h.term?` · <span class="term t-${h.term}">${h.term}</span>`:""}</small></td>
       <td>${won(h.buy*h.qty)}<small>${won(h.buy)}</small></td><td>${h.cur?won(h.cur*h.qty)+"<small>"+won(h.cur)+"</small>":'<span class="muted">-</span>'}</td>
       <td class="${cl}">${pl==null?'<span class="muted">-</span>':won(pl)}<small class="${cl}">${r==null?"":pct(r)}</small></td>
       
@@ -721,6 +740,7 @@ function renderPF(){
         <label>현재 단가<input data-k="cur" type="number" min="0" value="${h.cur??""}" placeholder="입력"></label>
         <label>목표 단가 (비우면 Claude 기준)<input data-k="tgt" type="number" min="0" value="${myTgt(h)??h.tgt??""}" placeholder="${won(t)}"></label>
         <label>시장<select data-k="mkt">${["코스피","코스닥"].map(m=>`<option${m===h.mkt?" selected":""}>${m}</option>`).join("")}</select></label>
+        <label>구분<select data-k="term"><option value="">미분류</option>${TERMS.map(t=>`<option${t===h.term?" selected":""}>${t}</option>`).join("")}</select></label>
         <label>섹터<select data-k="sec">${SECTORS.map(s=>`<option${s===h.sec?" selected":""}>${s}</option>`).join("")}</select></label>
         <button class="del${DEL===h.id?" confirm":""}" data-del="${i}">${DEL===h.id?"한 번 더 누르면 삭제":"종목 삭제"}</button></div><p class="muted" style="font-size:.8rem;margin:8px 0 0">${myTgt(h)?"목표가: 관심 종목(★) — 여기서 고치면 관심 종목 목표가도 함께 바뀝니다":h.tgt&&!h.tgtSrc?"목표가: 직접 입력":h.tgtSrc?"목표가 출처: "+h.tgtSrc+" (직접 입력하면 덮어씁니다)":"목표가: 증권사 목표가를 못 찾아 Claude 기준 적용"}${h.curAuto?" · 현재가: "+h.curAuto+" 종가 자동 반영":""}</p></td></tr>`;
     });
@@ -733,7 +753,8 @@ $("pf").addEventListener("change",e=>{
   const h=PF.holdings[+tr.dataset.i];
   if(k==="tgt"){const g=tgFind(h.name),v=Number(e.target.value); // 관심 종목이면 관심 종목 목표가를 바꿈
     if(g){if(v>0){g.target=v;tgPersist();if(TG)renderTG();}return renderPF();}}
-  if(k==="mkt"||k==="sec"){h[k]=e.target.value;h.chk=false;}
+  if(k==="term"){if(e.target.value)h.term=e.target.value;else delete h.term;}
+  else if(k==="mkt"||k==="sec"){h[k]=e.target.value;h.chk=false;}
   else{const v=e.target.value===""?null:Number(e.target.value); if(k==="buy"||k==="qty"){if(v==null||v<0)return renderPF(); h[k]=v;} else {h[k]=v&&v>0?v:null; if(k==="tgt") h.tgtSrc=null; if(k==="cur") markCur(h);}}
   renderPF(); persist();
 });
@@ -755,7 +776,7 @@ $("a-go").addEventListener("click",()=>{
   ["a-nm","a-buy","a-qty","a-cur"].forEach(id=>$(id).value="");
   renderPF(); persist();
 });
-$("f-mkt").addEventListener("change",renderPF);
+$("f-mkt").addEventListener("change",renderPF);$("f-term").addEventListener("change",renderPF);
 $("f-pr").addEventListener("change",e=>{const v=+e.target.value; if(v>0){PF.principal=v;renderPF();persist();}});
 $("f-cash").addEventListener("change",e=>{const v=+e.target.value; PF.cash=v>=0?v:0;renderPF();persist();});
 $("f-as").addEventListener("change",e=>{const v=+e.target.value; PF.asset=v>0?v:null;renderPF();persist();});
