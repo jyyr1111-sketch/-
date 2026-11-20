@@ -4,9 +4,12 @@
 사용법: python3 stocks/investor_flow.py <portfolio.json> <out.json>
 - 네이버 종목별 투자자 동향(최근 거래일 확정치)을 본다. 당일 수치는 장 마감 뒤 저녁~다음 날 아침에
   올라오므로, 아침에 돌리면 전 거래일 기준이 된다.
-- mon: 보유 전 종목의 최근 12개월(이번 달 포함) 월별 외국인·기관 순매수 합계.
+- mon: 보유 전 종목의 최근 MONTHS(6)개월(이번 달 포함) 월별 외국인·기관 순매수 합계.
   {name, code, m: {"YYYY-MM": [외국인 주, 기관 주, 외국인 억원, 기관 억원]}} — 억원은 일별 순매수 × 그날 종가의 합.
   페이지에서 월 범위를 골라 더해 보여준다. 연기금은 네이버 종목별 자료에 없어 담지 않는다.
+- index: 코스피·코스닥 최근 종가. base: 종목별 '평단 시점' — 최근 MONTHS 개월 중 종가가 내 평단에 가장 가까웠던
+  가장 최근 날(±3% 안이면 그중 가장 최근, 없으면 가장 가까운 날)과 그날의 해당 시장 지수.
+  페이지는 index 로 '본전 환산 지수'(지수 × 평단 ÷ 현재가)를 계산한다.
 - 결과: {"date","updated","checked","items":[...],"frgnRun":[...],"organRun":[...],"mon":[...],"months":[...]}
   items 는 외국인·기관 동시 순매수, frgnRun/organRun 은 외국인/기관이 RUN(4)거래일 이상 연속 순매수한 종목.
   각 항목 {name,code,close,chg,frgn,organ,frgnAmt,organAmt,streak,fStreak,oStreak,frgn5,organ5}
@@ -21,6 +24,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import update_prices as up  # noqa: E402
 
 RUN = 4
+MONTHS = 6  # 월별 합계 기간(이번 달 포함). 늘리면 종목당 요청이 늘어 느려진다
 
 
 def num(v):
@@ -60,15 +64,26 @@ def main(src, dst):
             n += 1
         return n
 
-    # 최근 12개월 월별 합계: 앞에서 받은 60거래일 뒤로 bizdate 를 넘겨 가며 1년치를 더 받는다
+    # 최근 MONTHS 개월 월별 합계: 앞에서 받은 60거래일 뒤로 bizdate 를 넘겨 가며 더 받는다
     y, mo = int(day[:4]), int(day[4:6])
     months = []
-    for _ in range(12):
+    for _ in range(MONTHS):
         months.append("%04d-%02d" % (y, mo))
         y, mo = (y, mo - 1) if mo > 1 else (y - 1, 12)
     months.reverse()
     since = months[0].replace("-", "") + "01"
-    mon = []
+    # 코스피·코스닥 일별 종가(같은 기간)
+    idx = {}
+    for mk in ("KOSPI", "KOSDAQ"):
+        idx[mk] = {}
+        for pg in range(1, MONTHS // 2 + 2):
+            try:
+                for x in up.get_json("https://m.stock.naver.com/api/index/%s/price?pageSize=60&page=%d" % (mk, pg)):
+                    idx[mk][x["localTradedAt"].replace("-", "")] = float(str(x["closePrice"]).replace(",", ""))
+            except Exception:
+                break
+    index = {mk: {"close": v[max(v)], "date": out_day(max(v))} for mk, v in idx.items() if v}
+    mon, base = [], {}
     for h, c, t in rows:
         if t[0]["bizdate"] != day:
             continue
@@ -94,6 +109,16 @@ def main(src, dst):
             v[2] += f * cp / 1e8
             v[3] += o * cp / 1e8
         mon.append({"name": h["name"], "code": c, "m": {k: [v[0], v[1], round(v[2], 1), round(v[3], 1)] for k, v in m.items()}})
+        # 평단 시점
+        buy = h.get("buy")
+        mk = "KOSDAQ" if h.get("mkt") == "코스닥" else "KOSPI"
+        days = [(x["bizdate"], num(x["closePrice"])) for x in hist if x["bizdate"] >= since and num(x["closePrice"]) > 0]
+        if buy and days:
+            near = [d for d in days if abs(d[1] / buy - 1) <= 0.03]
+            d = max(near) if near else min(days, key=lambda d: abs(d[1] / buy - 1))
+            ix = idx.get(mk, {}).get(d[0])
+            base[h["name"]] = {"date": out_day(d[0]), "close": d[1], "diff": round((d[1] / buy - 1) * 100, 1),
+                               "mkt": mk, "idx": ix, "near": bool(near), "max": max(x[1] for x in days)}
 
     items, frun, orun = [], [], []
     for h, c, t in rows:
@@ -127,7 +152,7 @@ def main(src, dst):
     out = {"date": "%s-%s-%s" % (day[:4], day[4:6], day[6:]), "updated": datetime.now(up.KST).isoformat(timespec="seconds"),
            "checked": checked, "items": items,
            "frgnRun": frun, "organRun": orun, "run": RUN,
-           "mon": mon, "months": months}
+           "mon": mon, "months": months, "index": index, "base": base}
     json.dump(out, open(dst, "w", encoding="utf-8"), ensure_ascii=False)
     print("%s 기준 · %d종목 확인 · 외국인·기관 동시 순매수 %d종목" % (out["date"], checked, len(items)))
     for x in items:

@@ -415,6 +415,9 @@ table.pl input.plin.q{width:72px}
 .m3t td small{display:block;font-size:.72rem;color:var(--sub);font-weight:400}
 .m3t td.up small,.m3t td.down small{color:inherit;opacity:.75}
 .m3t tr.tot td{font-weight:700;border-top:2px solid var(--accent);border-bottom:0}
+.ixt{table-layout:fixed}
+.ixt th:nth-child(1){width:38%} .ixt th:nth-child(2){width:27%}
+.ixt td,.ixt .r{white-space:normal;word-break:keep-all}
 .fl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .flc{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:11px 14px;font-size:.88rem}
 .flc .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -473,7 +476,7 @@ table.pl input.plin.q{width:72px}
     <section><h2>외국인 · 기관 동시 순매수</h2><div class="fl-grid" id="fl-list"></div></section>
     <section><h2 id="fl-fh">외국인 연속 순매수</h2><div class="fl-grid" id="fl-frgn"></div></section>
     <section><h2 id="fl-oh">기관 연속 순매수</h2><div class="fl-grid" id="fl-organ"></div></section>
-    <p class="note">내 포트폴리오 보유 종목만 봅니다. 매일 밤 10시쯤 Claude가 네이버 금융의 종목별 투자자 동향으로 그날 기준을 정리해요(그때까지 수치가 안 올라오면 다음 날 아침 8시 48분에 채워요). 금액은 순매수 수량 × 그날 종가로 어림한 값이고, 연속 순매수 누적 금액은 연속 기간 동안의 합입니다. 월별 누적은 최근 12개월 중 고른 기간의 일별 순매수 × 그날 종가를 더한 값이에요(기본은 이번 달). 연기금은 네이버 종목별 자료에 없어 아직 넣지 못했어요. 투자 권유가 아닙니다.</p>
+    <p class="note">내 포트폴리오 보유 종목만 봅니다. 매일 밤 10시쯤 Claude가 네이버 금융의 종목별 투자자 동향으로 그날 기준을 정리해요(그때까지 수치가 안 올라오면 다음 날 아침 8시 48분에 채워요). 금액은 순매수 수량 × 그날 종가로 어림한 값이고, 연속 순매수 누적 금액은 연속 기간 동안의 합입니다. 월별 누적은 최근 6개월 중 고른 기간의 일별 순매수 × 그날 종가를 더한 값이에요(기본은 이번 달). 연기금은 네이버 종목별 자료에 없어 아직 넣지 못했어요. 투자 권유가 아닙니다.</p>
   </div>
   <div id="p-n" role="tabpanel" hidden>
     <div class="toolbar"><input id="nw-q" class="qsearch" type="search" placeholder="종목 검색 (이름·제목)" aria-label="뉴스 종목 검색"><label>보기 <select id="nw-f"><option value="">전체</option><option value="h">보유 종목만</option><option value="w">관심 종목만</option><option value="r">리포트만</option></select></label><span class="status" id="nw-date"></span></div>
@@ -566,6 +569,11 @@ table.pl input.plin.q{width:72px}
         <div><h2>섹터 비중</h2><div id="mix-sec"></div></div>
         <div><h2>코스피 · 코스닥</h2><div id="mix-mkt"></div></div>
       </div>
+      <section id="ix-box" hidden style="margin-bottom:26px"><h2>지수로 보는 내 평단</h2>
+        <div class="sum num" id="ix-sum"></div>
+        <div class="toolbar"><label>정렬 <select id="ix-s"><option value="">본전까지 먼 순</option><option value="near">본전 가까운 순</option><option value="name">이름순</option></select></label><span class="status" id="ix-d"></span></div>
+        <div class="tbl-wrap"><table class="m3t ixt num" id="ix-t"></table></div><button class="addrow" type="button" id="ix-more" hidden></button>
+        <p class="note" style="border:0;padding-top:6px">본전 지수 = 지금 지수 × 평단 ÷ 현재가. 종목이 시장 지수만큼 움직인다고 가정했을 때 내 평단에 닿는 지수예요(실제로는 종목마다 움직임이 달라요). 평단 시점은 최근 6개월 중 종가가 내 평단 ±3% 안이었던 가장 최근 날과 그날 지수이고, 그런 날이 없으면 가장 가까웠던 날을 보여줘요.</p></section>
       <h2>보유 종목</h2>
       <div class="toolbar">
         <label>시장 <select id="f-mkt"><option value="">전체</option><option>코스피</option><option>코스닥</option></select></label>
@@ -756,6 +764,7 @@ function renderPF(){
     });
   });
   $("pf").innerHTML=html;
+  if(typeof renderIX==="function"&&IX) renderIX();
 }
 
 $("pf").addEventListener("change",e=>{
@@ -823,7 +832,7 @@ $("paste-go").addEventListener("click",()=>{
   $("paste-msg").textContent=hit.length+"종목 반영"+(miss.length?" · 못 찾음: "+miss.join(", "):"");
   if(hit.length){renderPF();persist();}
 });
-initPF().then(initTG).then(()=>{if(AS)renderAS();if(VD)renderV();initFL();initNW();initFN();});
+initPF().then(initTG).then(()=>{if(AS)renderAS();if(VD)renderV();initFL();initNW();initFN();initIX();});
 
 // ---------- 목표 종목 (Claude가 매일 data/users/<id>/targets 의 현재가를 갱신) ----------
 let TG=null, tgRef=null, tgOpen=null, tgDel=null, tgTimer=null, tgChain=Promise.resolve();
@@ -1356,7 +1365,38 @@ function renderNW(){
 }
 $("nw-f").addEventListener("change",renderNW);$("nw-q").addEventListener("input",renderNW);
 
-// 월별 외국인·기관 누적 순매수: 최근 12개월 중 고른 기간(기본: 이번 달)만 더해 보여줌
+// ---------- 지수로 보는 내 평단 (flows 문서의 index·base 사용) ----------
+let IX=null, IXALL=false;
+async function initIX(){
+  try{const c=window.claude;const [db,user]=c?await Promise.all([c.use("db"),c.use("user")]):[null,null];const uid=user?await user.id():null;
+    if(db&&uid){const s=await db.doc("data/users/"+uid+"/flows").get();if(s.exists){const d=s.data();IX={index:d.index||{},base:d.base||{}};}}}catch(e){}
+  renderIX();
+}
+function renderIX(){
+  if(!IX||!PF||!IX.index.KOSPI){$("ix-box").hidden=true;return;}
+  $("ix-box").hidden=false;
+  const key=h=>h.mkt==="코스닥"?"KOSDAQ":"KOSPI", nm={KOSPI:"코스피",KOSDAQ:"코스닥"};
+  const n2=v=>v==null?"-":Number(v).toLocaleString("ko-KR",{maximumFractionDigits:2,minimumFractionDigits:2});
+  const md=t=>t?t.slice(2).replace(/-/g,"/"):"";
+  const hs=PF.holdings.filter(h=>h.cur&&h.buy&&IX.index[key(h)]);
+  // 시장별 전체: 지수 × 매입금액 ÷ 평가금액
+  $("ix-sum").innerHTML=["KOSPI","KOSDAQ"].map(k=>{const g=hs.filter(h=>key(h)===k);if(!g.length)return "";
+    const c=g.reduce((a,h)=>a+h.buy*h.qty,0),v=g.reduce((a,h)=>a+h.cur*h.qty,0),I=IX.index[k].close,be=I*c/v;
+    return `<div><small>${nm[k]} 지금 ${n2(I)} → 내 ${nm[k]} 종목 본전</small><b>${n2(be)}</b><span class="${cls(be-I)}" style="font-size:.8rem">${be>=I?"+":""}${pct((be/I-1)*100).replace(/^\+?/,"")} 필요</span></div>`;}).join("");
+  $("ix-d").textContent=`${md(IX.index.KOSPI.date)} 종가 기준`;
+  const rows=hs.map(h=>{const I=IX.index[key(h)].close, be=I*h.buy/h.cur, b=IX.base[h.name];return {h,I,be,need:(h.buy/h.cur-1)*100,b};});
+  const s=$("ix-s").value;
+  rows.sort(s==="near"?(a,b)=>a.need-b.need:s==="name"?(a,b)=>a.h.name.localeCompare(b.h.name,"ko"):(a,b)=>b.need-a.need);
+  const N=10, shown=IXALL?rows:rows.slice(0,N);
+  $("ix-more").hidden=rows.length<=N; $("ix-more").textContent=IXALL?"접기":`전체 ${rows.length}종목 보기`;
+  $("ix-t").innerHTML=`<tr><th>종목</th><th class="r">본전 지수</th><th class="r">평단 시점</th></tr>`+shown.map(({h,I,be,need,b})=>
+    `<tr><td><b>${esc(h.name)}</b><small>${nm[key(h)]} · 평단 ${won(h.buy)} · 현재 ${won(h.cur)}</small></td>
+      <td class="r ${need>0?"up":"down"}">${n2(be)}<small>${need>0?"+"+need.toFixed(1)+"% 필요":"이미 수익"}</small></td>
+      <td class="r">${b&&b.idx?`${md(b.date)}<small>${nm[b.mkt]} ${n2(b.idx)}${b.near?"":` · 가장 근접(${b.diff>0?"+":""}${b.diff}%)`}</small>`:'<span class="muted">-</span>'}</td></tr>`).join("");
+}
+$("ix-s").addEventListener("change",renderIX);$("ix-more").addEventListener("click",()=>{IXALL=!IXALL;renderIX();});
+
+// 월별 외국인·기관 누적 순매수: 최근 6개월 중 고른 기간(기본: 이번 달)만 더해 보여줌
 let FLM3=null;
 const ymLabel=k=>`${k.slice(2,4)}년 ${+k.slice(5)}월`;
 function setupM3(){
