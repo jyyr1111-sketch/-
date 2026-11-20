@@ -4,9 +4,10 @@
 사용법: python3 stocks/investor_flow.py <portfolio.json> <out.json>
 - 네이버 종목별 투자자 동향(최근 거래일 확정치)을 본다. 당일 수치는 장 마감 뒤 저녁~다음 날 아침에
   올라오므로, 아침에 돌리면 전 거래일 기준이 된다.
-- m3: 보유 전 종목의 최근 약 3개월(60거래일) 외국인·기관 순매수 누적(주, 억원 = 일별 순매수 × 그날 종가의 합).
-  연기금은 이 자료원(네이버 모바일 종목 투자자 동향)에 없어 담지 않는다.
-- 결과: {"date","updated","checked","items":[...],"frgnRun":[...],"organRun":[...],"m3":[...],"m3From","m3To"}
+- mon: 보유 전 종목의 최근 12개월(이번 달 포함) 월별 외국인·기관 순매수 합계.
+  {name, code, m: {"YYYY-MM": [외국인 주, 기관 주, 외국인 억원, 기관 억원]}} — 억원은 일별 순매수 × 그날 종가의 합.
+  페이지에서 월 범위를 골라 더해 보여준다. 연기금은 네이버 종목별 자료에 없어 담지 않는다.
+- 결과: {"date","updated","checked","items":[...],"frgnRun":[...],"organRun":[...],"mon":[...],"months":[...]}
   items 는 외국인·기관 동시 순매수, frgnRun/organRun 은 외국인/기관이 RUN(4)거래일 이상 연속 순매수한 종목.
   각 항목 {name,code,close,chg,frgn,organ,frgnAmt,organAmt,streak,fStreak,oStreak,frgn5,organ5}
   수량은 주, 금액(Amt)은 수량 × 종가로 어림한 억원. streak 은 둘이 함께, fStreak/oStreak 은 각자 연속 순매수한 거래일 수.
@@ -59,19 +60,40 @@ def main(src, dst):
             n += 1
         return n
 
-    m3, m3from = [], None
+    # 최근 12개월 월별 합계: 앞에서 받은 60거래일 뒤로 bizdate 를 넘겨 가며 1년치를 더 받는다
+    y, mo = int(day[:4]), int(day[4:6])
+    months = []
+    for _ in range(12):
+        months.append("%04d-%02d" % (y, mo))
+        y, mo = (y, mo - 1) if mo > 1 else (y - 1, 12)
+    months.reverse()
+    since = months[0].replace("-", "") + "01"
+    mon = []
     for h, c, t in rows:
         if t[0]["bizdate"] != day:
             continue
-        w = t[:60]
-        m3from = min(m3from or w[-1]["bizdate"], w[-1]["bizdate"])
-        fq = sum(num(r["foreignerPureBuyQuant"]) for r in w)
-        oq = sum(num(r["organPureBuyQuant"]) for r in w)
-        fa = sum(num(r["foreignerPureBuyQuant"]) * num(r["closePrice"]) for r in w) / 1e8
-        oa = sum(num(r["organPureBuyQuant"]) * num(r["closePrice"]) for r in w) / 1e8
-        m3.append({"name": h["name"], "code": c, "close": num(t[0]["closePrice"]), "days": len(w),
-                   "frgnQ": fq, "organQ": oq, "frgnAmt": round(fa, 1), "organAmt": round(oa, 1)})
-    m3.sort(key=lambda x: -(x["frgnAmt"] + x["organAmt"]))
+        hist = list(t)
+        while hist and hist[-1]["bizdate"] > since and len(hist) < 320:
+            try:
+                more = up.get_json("https://m.stock.naver.com/api/stock/%s/trend?pageSize=60&bizdate=%s" % (c, hist[-1]["bizdate"]))
+            except Exception:
+                break
+            more = [x for x in more if x["bizdate"] < hist[-1]["bizdate"]]
+            if not more:
+                break
+            hist += more
+        m = {}
+        for x in hist:
+            if x["bizdate"] < since:
+                continue
+            k = x["bizdate"][:4] + "-" + x["bizdate"][4:6]
+            v = m.setdefault(k, [0, 0, 0.0, 0.0])
+            f, o, cp = num(x["foreignerPureBuyQuant"]), num(x["organPureBuyQuant"]), num(x["closePrice"])
+            v[0] += f
+            v[1] += o
+            v[2] += f * cp / 1e8
+            v[3] += o * cp / 1e8
+        mon.append({"name": h["name"], "code": c, "m": {k: [v[0], v[1], round(v[2], 1), round(v[3], 1)] for k, v in m.items()}})
 
     items, frun, orun = [], [], []
     for h, c, t in rows:
@@ -105,7 +127,7 @@ def main(src, dst):
     out = {"date": "%s-%s-%s" % (day[:4], day[4:6], day[6:]), "updated": datetime.now(up.KST).isoformat(timespec="seconds"),
            "checked": checked, "items": items,
            "frgnRun": frun, "organRun": orun, "run": RUN,
-           "m3": m3, "m3From": ("%s-%s-%s" % (m3from[:4], m3from[4:6], m3from[6:])) if m3from else None, "m3To": out_day(day)}
+           "mon": mon, "months": months}
     json.dump(out, open(dst, "w", encoding="utf-8"), ensure_ascii=False)
     print("%s 기준 · %d종목 확인 · 외국인·기관 동시 순매수 %d종목" % (out["date"], checked, len(items)))
     for x in items:
